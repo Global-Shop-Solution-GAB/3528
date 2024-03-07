@@ -1,0 +1,228 @@
+Program.Sub.ScreenSU.Start
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+
+
+Variable.UDT.File.Define("Description",String)
+Variable.UDT.File.Define("InvDate",String)
+Variable.UDT.File.Define("InvNo",String)
+Variable.UDT.File.Define("Currency",String)
+Variable.UDT.File.Define("Discount",String)
+Variable.UDT.File.Define("DueDate",String)
+Variable.UDT.File.Define("Status",String)
+Variable.UDT.File.Define("StatusDoc",String)
+Variable.UDT.File.Define("Type",String)
+Variable.UDT.File.Define("Org",String)
+Variable.UDT.File.Define("Buyer",String)
+Variable.UDT.File.Define("ShipTo",String)
+Variable.UDT.File.Define("TransCode",String)
+Variable.UDT.File.Define("Reference",String)
+Variable.UDT.File.Define("GrossAmt",String)
+Variable.UDT.File.Define("TransAmt",String)
+Variable.UDT.File.Define("AmtDue",String)
+Variable.UDT.File.Define("POno",String)
+Variable.uGlobal.uFile.Declare("File")
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+
+F.Intrinsic.Control.CallSub(Readfile)
+F.Intrinsic.Control.CallSub(Writefile)
+F.Intrinsic.Control.CallSub(Unload)
+
+Program.Sub.Main.End
+
+Program.Sub.Unload.Start
+
+
+F.Intrinsic.Control.End
+
+Program.Sub.Unload.End
+
+Program.Sub.readFile.Start
+
+V.Local.sRet.Declare(String)
+V.Local.sColumns.Declare(String)
+
+' openfile dialog to select file.
+F.Intrinsic.UI.ShowOpenFileDialog("","*.*","",V.Local.sRet)
+
+' if cancelled, end script, otherwise continue....
+F.Intrinsic.Control.If(V.Local.sRet,=,"***CANCEL***")
+	F.Intrinsic.Control.CallSub(Unload)
+F.Intrinsic.Control.EndIf
+
+Function.Intrinsic.UI.InvokeWaitDialog("Reading upload file.")
+
+' 09/16/2013 -- jct --
+' specify the excel column heading order, for loading data to the udt
+'V.Local.sColumns.Set("Item*!*NeedBy*!*Qty*!*QtyDue*!*QtyRec*!*InvNo*!*InvLne*!*Release*!*Shipment*!*ShipTo*!*Supplier*!*SupplSite*!*QtyAcc*!*QtyRej*!*QtyBill*!*QtyCanc*!*Buyer*!*AuthStatus*!*Cancelled*!*RcvCloseTol*!*CloseStatus")
+V.Local.sColumns.Set("InvNo*!*Description*!*InvDate*!*PONo*!*Currency*!*GrossAmt*!*AmtDue*!*Discount*!*DueDate*!*Status*!*Reference*!*StatusDoc*!*Type*!*Org")
+
+
+' read work book information; The sheet delimiter is &^&, the row delimiter is $!$, and the column delimiter is *!*
+F.Automation.MSExcel.ReadSpreadsheet(V.Local.sRet,V.Local.sRet)
+
+' split out possible multi sheets
+F.Intrinsic.String.Split(V.Local.sRet,"&^&",V.Local.sRet)
+
+' put values into udt
+f.Intrinsic.Variable.LoadUDTFromString(v.uGlobal.uFile,V.Local.sColumns,V.Local.sRet(0),"$!$","*!*",false,1000)
+
+' strip header
+F.Intrinsic.Variable.UDTMultiFlag(V.uGlobal.uFile!Type,"Type")
+
+' strip blank lines
+F.Intrinsic.Variable.UDTMultiFlag(V.uGlobal.uFile!Reference,"")
+
+F.Intrinsic.Variable.UDTDeleteFlagged(V.uGlobal.uFile)
+
+Program.Sub.readFile.End
+
+Program.Sub.writeFile.Start
+
+' Create a fixed width file with fields:
+' EDI Buyer ID - “EATON”
+' EDI Ship to - Blank
+' GSS Customer - Blank
+' Invoice Number - column F
+' Transaction Code - 10
+' Invoice Date - Today's Date (MMDDYY)
+' Transaction Date - Today's Date (MMDDYY)
+' Invoice Total - Blank
+' Transaction Amount - Find ininvoice history file
+' Reference Number - Number+Line+Release+Shipment(columnsF+G+H+I)
+' Exchange Date - Blank
+' Exchange Rate - Blank
+' Exchange Amoun - tBlank
+' Ehange Invoice Total - Blank
+' Freight Amount - Blank
+' Tax Amount - Blank
+' Invoice Due Date - Blank
+' Discount Due Date - Blank
+' Invoice Discount - Blank
+' Payment Type Check - CK
+' Prepaid Flag - Blank
+' Credit Memo Number - Blank
+' Packing Number - Blank
+' Filename is EA820ccc where 'ccc' is company code
+
+V.Local.sRet.Declare(String)
+V.Local.sTxtFile.Declare(String)
+V.Local.iFor.Declare(Long)
+V.Local.sHold.Declare(String)
+V.Local.sDate.Declare(String)
+V.Local.sRef.Declare(String)
+V.Local.sSel.Declare(String)
+V.Local.sFiller1.Declare(String)
+V.Local.sFiller2.Declare(String)
+V.Local.sFiller2b.Declare(String)
+V.Local.sFiller3.Declare(String)
+V.Local.sFiller4.Declare(String)
+V.Local.sFiller5.Declare(String)
+V.Local.sTransAmt.Declare(String)
+V.Local.sVal.Declare(String)
+V.Local.dDate.Declare(Date)
+
+F.Intrinsic.String.LPad(V.Local.sFiller1," ",7,V.Local.sFiller1)
+F.Intrinsic.String.LPad(V.Local.sFiller2," ",8,V.Local.sFiller2)
+F.Intrinsic.String.LPad(V.Local.sFiller2b," ",1,V.Local.sFiller2b)
+F.Intrinsic.String.LPad(V.Local.sFiller3," ",103,V.Local.sFiller3)
+F.Intrinsic.String.LPad(V.Local.sFiller4," ",242,V.Local.sFiller4)
+
+F.ODBC.Connection!Con.OpenConnection(V.Ambient.PDSN,V.Ambient.PUser,V.Ambient.PPass)
+
+F.Intrinsic.UI.ChangeWaitStatus("Writing txt")
+F.Intrinsic.String.Concat(V.Caller.FilesDir,"\EA820",V.Caller.CompanyCode,V.Local.sTxtFile)
+
+F.Intrinsic.Variable.UDTSetMemberValue(V.uGlobal.uFile!Buyer,"EATON")
+F.Intrinsic.Variable.UDTSetMemberValue(V.uGlobal.uFile!ShipTo,"")
+F.Intrinsic.Variable.UDTSetMemberValue(V.uGlobal.uFile!TransCode,"10")
+F.Intrinsic.Variable.UDTSetMemberValue(V.uGlobal.uFile!Type,"CK")
+F.Intrinsic.Variable.UDTMultiSeekSet(V.uGlobal.uFile!Discount,"",V.uGlobal.uFile!Discount,"0")
+
+F.Intrinsic.String.Format(V.Ambient.Date,"MMDDYY",V.Local.sDate)
+
+
+' for each incoming line, add additional information, pad as necessary, and write line to ea820 file
+F.Intrinsic.Control.For(V.Local.iFor,V.uGlobal.uFile!InvNo.LBound,V.uGlobal.uFile!InvNo.UBound,1)
+
+	' Buyer (35)
+	F.Intrinsic.String.RPad(V.uGlobal.uFile(v.Local.iFor)!Buyer," ",35,V.uGlobal.uFile(v.Local.iFor)!Buyer)
+
+	' shipto (17)
+	F.Intrinsic.String.RPad(V.uGlobal.uFile(v.Local.iFor)!ShipTo," ",17,V.uGlobal.uFile(v.Local.iFor)!ShipTo)
+
+
+' 09/16/2013 -- jct --
+	' PO (7)
+'	F.Intrinsic.String.RPad(V.uGlobal.uFile(v.Local.iFor)!InvNo," ",7,V.uGlobal.uFile(V.Local.iFor)!InvNo)
+	F.Intrinsic.String.Split(V.uGlobal.uFile(v.Local.iFor)!PONo,"-",V.Local.sVal)
+	F.Intrinsic.String.LPad(V.Local.sVal(V.Local.sVal.UBound),"0",7,V.uGlobal.uFile(V.Local.iFor)!InvNo)
+
+' 09/16/2013 -- jct --
+	' Trans Amt (19; 0.00)
+'	F.Intrinsic.String.Concat("select Amt_Trans_Total from AR_History where Batch_Code ='10' and Invoice='",V.uGlobal.uFile(v.Local.iFor)!InvNo,"' ",V.Local.sSel)
+'	f.ODBC.Connection!Con.ExecuteAndReturn(v.Local.sSel,v.Local.sRet)
+'	F.Intrinsic.Control.If(V.Local.sRet,<>,"")
+'		F.Intrinsic.String.Split(V.Local.sRet,"*!*",V.Local.sRet)
+'	F.Intrinsic.Control.Else
+
+		' on 9/17/2013, it would not assume a single item was the 0 element, so manually redimmed
+		V.Local.sRet.Redim(0,0)
+		V.Local.sRet(0).Set("0")
+'	F.Intrinsic.Control.EndIf
+	F.Intrinsic.String.Format(V.Local.sRet(0),"00000000000000.0000",V.Local.sTransAmt)
+	
+	' Reference Number (15; Inv+Line+Release+Shipment)
+' 09/16/2013 -- jct --
+'	F.Intrinsic.String.Concat(V.uGlobal.uFile(v.Local.iFor)!InvNo,V.uGlobal.uFile(v.Local.iFor)!InvLne,V.uGlobal.uFile(v.Local.iFor)!Release,V.uGlobal.uFile(v.Local.iFor)!Shipment,V.Local.sRef)
+	F.Intrinsic.String.RPad(V.uGlobal.uFile(v.Local.iFor)!Payment," ",15,V.Local.sRef)
+
+' 09/16/2013 -- jct --
+	' invoice date
+	F.Intrinsic.String.Format(V.uGlobal.uFile(v.Local.iFor)!InvDate,"MMDDYY",V.uGlobal.uFile(v.Local.iFor)!InvDate)
+
+' 09/16/2013 -- jct --
+	' reference
+	F.Intrinsic.String.RPad(V.uGlobal.uFile(v.Local.iFor)!Reference," ",15,V.Local.sRef)
+
+' 09/16/2013 -- jct --
+	' due date
+	F.Intrinsic.String.Format(V.uGlobal.uFile(v.Local.iFor)!DueDate,"YYYYMMDD",V.uGlobal.uFile(v.Local.iFor)!DueDate)
+
+' 09/16/2013 -- jct --
+	' invoice total
+	F.Intrinsic.String.Format(V.uGlobal.uFile(v.Local.iFor)!GrossAmt,"00000000000000.0000",V.uGlobal.uFile(v.Local.iFor)!GrossAmt)
+
+' 09/17/2013 -- jct
+	F.Intrinsic.String.Replace(V.uGlobal.uFile(v.Local.iFor)!Discount,"-","",V.uGlobal.uFile(v.Local.iFor)!Discount)
+	F.Intrinsic.String.Format(V.uGlobal.uFile(v.Local.iFor)!Discount,"0.0000",V.uGlobal.uFile(v.Local.iFor)!Discount)
+	F.Intrinsic.String.LPad(V.uGlobal.uFile(v.Local.ifor)!Discount,"0",16,V.uGlobal.uFile(v.Local.ifor)!Discount)
+
+	' join fields
+	F.Intrinsic.Control.If(V.Local.sHold.Trim,=,"")
+		F.Intrinsic.String.Concat(V.uGlobal.uFile(v.Local.iFor)!Buyer,V.uGlobal.uFile(v.Local.iFor)!ShipTo,V.Local.sFiller1,V.uGlobal.uFile(v.Local.iFor)!InvNo,V.uGlobal.uFile(v.Local.iFor)!TransCode,V.uGlobal.uFile(v.Local.iFor)!InvDate,V.Local.sDate,V.Local.sTransAmt,V.uGlobal.uFile(v.Local.iFor)!GrossAmt,V.Local.sRef,V.Local.sFiller3,V.uGlobal.uFile(v.Local.iFor)!DueDate,V.Local.sFiller2,V.uGlobal.uFile(v.Local.ifor)!Discount,V.uGlobal.uFile(v.Local.iFor)!Type,V.Local.sFiller4,V.Local.sHold)
+	F.Intrinsic.Control.Else
+		F.Intrinsic.String.Concat(V.Local.sHold,V.Ambient.NewLine,V.uGlobal.uFile(v.Local.iFor)!Buyer,V.uGlobal.uFile(v.Local.iFor)!ShipTo,V.Local.sFiller1,V.uGlobal.uFile(v.Local.iFor)!InvNo,V.uGlobal.uFile(v.Local.iFor)!TransCode,V.uGlobal.uFile(v.Local.iFor)!InvDate,V.Local.sDate,V.Local.sTransAmt,V.uGlobal.uFile(v.Local.iFor)!GrossAmt,V.Local.sRef,V.Local.sFiller3,V.uGlobal.uFile(v.Local.iFor)!DueDate,V.Local.sFiller2,V.uGlobal.uFile(v.Local.ifor)!Discount,V.uGlobal.uFile(v.Local.iFor)!Type,V.Local.sFiller4,V.Local.sHold)
+	F.Intrinsic.Control.EndIf
+
+
+F.Intrinsic.Control.Next(V.Local.iFor)
+
+F.ODBC.Connection!Con.Close
+
+F.Intrinsic.File.String2File(V.Local.sTxtFile,V.Local.sHold)
+F.Intrinsic.UI.CloseWaitDialog
+
+Program.Sub.writeFile.End
+
+Program.Sub.Comments.Start
+${$0$}$GCG_Eaton_AR_Remit$}$JCT$}$7/10/2013
+${$3$}$0$}$$}$-1$}$-1$}$$}$1/1/1900$}$For Universal Metal Products
+Quote 3988
+Import xcel data, convert to  EA820 fixed width file
+${$4$}$0$}$$}$0$}$-1$}$JCT$}$9/16/2013 10:52:59 AM$}$incoming file layout changed
+Program.Sub.Comments.End
+

@@ -1,0 +1,156 @@
+Program.Sub.ScreenSU.Start
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+
+Variable.UDT.File.Define("Item",String)
+Variable.UDT.File.Define("NeedBy",Date)
+Variable.UDT.File.Define("Qty",Long)
+Variable.UDT.File.Define("QtyDue",Long)
+Variable.UDT.File.Define("QtyRec",Long)
+Variable.UDT.File.Define("InvLne",String)
+Variable.UDT.File.Define("InvNo",String)
+Variable.UDT.File.Define("Release",String)
+Variable.UDT.File.Define("Shipment",String)
+Variable.UDT.File.Define("ShipTo",String)
+Variable.UDT.File.Define("Supplier",String)
+Variable.UDT.File.Define("SupplSite",String)
+Variable.UDT.File.Define("QtyAcc",Long)
+Variable.UDT.File.Define("QtyRej",Long)
+Variable.UDT.File.Define("QtyBill",Long)
+Variable.UDT.File.Define("QtyCanc",String)
+Variable.UDT.File.Define("Buyer",String)
+Variable.UDT.File.Define("AuthStatus",String)
+Variable.UDT.File.Define("Cancelled",String)
+Variable.UDT.File.Define("RcvCloseTol",Long)
+Variable.UDT.File.Define("CloseStatus",String)
+Variable.UDT.File.Define("Tracking",String)
+Variable.UDT.File.Define("SO",String)
+Variable.UDT.File.Define("Packing",String)
+Variable.UDT.File.Define("PO",String)
+Variable.UDT.File.Define("POno",String)
+Variable.UDT.File.Define("ShipAmt",String)
+Variable.uGlobal.uFile.Declare("File")
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+
+' 09-16-2013 -- jct -- changed for new import file field layout
+
+F.Intrinsic.Control.CallSub(Readfile)
+F.Intrinsic.Control.CallSub(Writefile)
+F.Intrinsic.Control.CallSub(Loadfile)
+F.Intrinsic.Control.CallSub(Unload)
+
+Program.Sub.Main.End
+
+Program.Sub.Unload.Start
+
+
+F.Intrinsic.Control.End
+
+Program.Sub.Unload.End
+
+Program.Sub.readFile.Start
+
+V.Local.sRet.Declare(String)
+V.Local.sColumns.Declare(String)
+
+' openfile dialog to select file.
+F.Intrinsic.UI.ShowOpenFileDialog("","*.*","",V.Local.sRet)
+
+' if cancelled, end script, otherwise continue....
+F.Intrinsic.Control.If(V.Local.sRet,=,"***CANCEL***")
+	F.Intrinsic.Control.CallSub(Unload)
+F.Intrinsic.Control.EndIf
+
+Function.Intrinsic.UI.InvokeWaitDialog("Reading upload file.")
+
+
+' specify the excel column heading order, for loading data to the udt
+' 09-16-2013 -- jct --
+'V.Local.sColumns.Set("Item*!*NeedBy*!*Qty*!*QtyDue*!*QtyRec*!*InvNo*!*InvLne*!*Release*!*Shipment*!*ShipTo*!*Supplier*!*SupplSite*!*QtyAcc*!*QtyRej*!*QtyBill*!*QtyCanc*!*Buyer*!*AuthStatus*!*Cancelled*!*RcvCloseTol*!*CloseStatus")
+V.Local.sColumns.Set("Item*!*NeedBy*!*Qty*!*QtyDue*!*QtyRec*!*PO*!*ShipAmt*!*InvLne*!*InvNo*!*Shipment*!*ShipTo*!*Supplier*!*SupplSite*!*QtyAcc*!*QtyRej*!*QtyBill*!*QtyCanc*!*Buyer*!*AuthStatus*!*Cancelled*!*RcvCloseTol*!*CloseStatus")
+
+
+' read work book information; The sheet delimiter is &^&, the row delimiter is $!$, and the column delimiter is *!*
+F.Automation.MSExcel.ReadSpreadsheet(V.Local.sRet,V.Local.sRet)
+
+' split out possible multi sheets
+F.Intrinsic.String.Split(V.Local.sRet,"&^&",V.Local.sRet)
+
+' put values into udt
+F.Intrinsic.Variable.LoadUDTFromString(v.uGlobal.uFile,V.Local.sColumns,V.Local.sRet(0),"$!$","*!*",False,1000)
+
+' strip header
+F.Intrinsic.Variable.UDTMultiFlag(V.uGlobal.uFile!Item,"Item")
+F.Intrinsic.Variable.UDTDeleteFlagged(V.uGlobal.uFile)
+
+' strip blank lines
+F.Intrinsic.Variable.UDTMultiFlag(V.uGlobal.uFile!Item,"")
+F.Intrinsic.Variable.UDTDeleteFlagged(V.uGlobal.uFile)
+
+
+
+Program.Sub.readFile.End
+
+Program.Sub.writeFile.Start
+
+' Create a comma-delimited file with fields:
+' part, quantity, po, tracking number, sales order, packing number, and invoice number.
+' Part (column A)
+' Quantity (column C)
+' PO (column F)
+' Tracking Number (not available, leave empty)
+' Sales Order (not available, leave empty)
+' Packing Number (not available, leave empty)
+' Invoice Number (column I)
+' Filename is UCtttccc.txt where 'ttt' is terminal id and 'ccc' is company code
+
+V.Local.sSel.Declare(String)
+V.Local.sRet.Declare(String)
+V.Local.sTxtFile.Declare(String)
+V.Local.iFor.Declare(Long)
+
+F.ODBC.Connection!Con.OpenConnection(V.Ambient.PDSN,V.Ambient.PUser,V.Ambient.PPass)
+F.Intrinsic.Control.For(V.Local.iFor,V.uGlobal.uFile!Item.LBound,V.uGlobal.uFile!InvLne.UBound,1)
+	' get part from customer cross reference
+	F.Intrinsic.String.Concat("select Part from Inv_Cross_Ref where Customer_Part ='",V.uGlobal.uFile(v.Local.iFor)!Item,"' ",V.Local.sSel)
+	F.ODBC.Connection!Con.ExecuteAndReturn(v.Local.sSel,v.Local.sRet)
+
+	' if cross ref part not found, leave it as the part on the incoming file
+	F.Intrinsic.Control.If(V.Local.sRet.Trim,<>,"")
+		F.Intrinsic.String.Split(V.Local.sRet,"#$#",V.Local.sRet)
+		F.Intrinsic.String.Split(V.Local.sRet(0),"*!*",V.Local.sRet)
+		V.uGlobal.uFile(v.Local.iFor)!Item.Set(V.Local.sRet(0))
+	F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.Next(V.Local.iFor)
+F.ODBC.Connection!Con.Close
+
+F.Intrinsic.UI.ChangeWaitStatus("Writing txt")
+F.Intrinsic.String.Concat(V.Caller.FilesDir,"\UC",V.Caller.Terminal,V.Caller.CompanyCode,".txt",V.Local.sTxtFile)
+
+F.Intrinsic.Variable.UDTToString(V.uGlobal.uFile,"Item*!*Qty*!*PO*!*Tracking*!*SO*!*Packing*!*InvNo",V.Ambient.NewLine,",",V.Local.sRet)
+F.Intrinsic.File.String2File(V.Local.sTxtFile,V.Local.sRet)
+
+
+Program.Sub.writeFile.End
+
+Program.Sub.loadFile.Start
+
+F.Intrinsic.UI.CloseWaitDialog
+F.Global.General.CallWrappersync(50,"CSNUPMNU")
+
+
+Program.Sub.loadFile.End
+
+Program.Sub.Comments.Start
+${$0$}$GCG_Eaton_Consignment$}$JCT$}$7/10/2013
+${$3$}$0$}$$}$-1$}$-1$}$$}$1/1/1900$}$For Universal Metal Products
+Quote 3988
+Import xcel data into txt for batch file creation
+${$4$}$0$}$$}$0$}$-1$}$JCT$}$9/16/2013 10:16:02 AM$}$import file layout changed a little.  new layout (new/changed columns in caps):
+Item, need by, qty, qty due, qty rec, PO NUMBER, SHIPMENT AMT, line, INVOICE, shipment, ship to, supplier, supplier site, qty accepted, qty rejected, qty billed, buyer, authorization, cancelled, receiving, status
+Program.Sub.Comments.End
+

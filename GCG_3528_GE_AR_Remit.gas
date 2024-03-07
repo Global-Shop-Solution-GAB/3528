@@ -1,0 +1,206 @@
+Program.Sub.ScreenSU.Start
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+
+Variable.UDT.File.Define("Vendor",String)
+Variable.UDT.File.Define("Voucher",String)
+Variable.UDT.File.Define("TransDate",String)
+Variable.UDT.File.Define("Amount",String)
+Variable.UDT.File.Define("InvDate",String)
+Variable.UDT.File.Define("Ordno",String)
+Variable.UDT.File.Define("Gross",String)
+Variable.UDT.File.Define("Discount",String)
+Variable.UDT.File.Define("Comment",String)
+Variable.UDT.File.Define("Buyer",String)
+Variable.UDT.File.Define("ShipTo",String)
+Variable.UDT.File.Define("TransCode",String)
+Variable.UDT.File.Define("Type",String)
+Variable.UDT.File.Define("Customer",String)
+Variable.UDT.File.Define("InvNo",String)
+Variable.UDT.File.Define("PackingNo",String)
+Variable.UDT.File.Define("Net",String)
+Variable.uGlobal.uFile.Declare("File")
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+
+F.Intrinsic.Control.CallSub(Readfile)
+F.Intrinsic.Control.CallSub(Writefile)
+F.Intrinsic.Control.CallSub(Unload)
+
+Program.Sub.Main.End
+
+Program.Sub.Readfile.Start
+
+
+V.Local.sRet.Declare(String)
+V.Local.sColumns.Declare(String)
+
+' openfile dialog to select file.
+F.Intrinsic.UI.ShowOpenFileDialog("","*.*","",V.Local.sRet)
+
+' if cancelled, end script, otherwise continue....
+F.Intrinsic.Control.If(V.Local.sRet,=,"***CANCEL***")
+	F.Intrinsic.Control.CallSub(Unload)
+F.Intrinsic.Control.EndIf
+
+Function.Intrinsic.UI.InvokeWaitDialog("Reading upload file.")
+
+V.Local.sColumns.Set("Vendor*!*Voucher*!*TransDate*!*Amount*!*PackingNo*!*InvDate*!*OrdNo*!*Gross*!*Discount*!*Net*!*Comment")
+
+
+' read work book information; The sheet delimiter is &^&, the row delimiter is $!$, and the column delimiter is *!*
+F.Automation.MSExcel.ReadSpreadsheet(V.Local.sRet,V.Local.sRet)
+
+' split out possible multi sheets
+F.Intrinsic.String.Split(V.Local.sRet,"&^&",V.Local.sRet)
+
+' put values into udt
+F.Intrinsic.Variable.LoadUDTFromString(v.uGlobal.uFile,V.Local.sColumns,V.Local.sRet(0),"$!$","*!*",False,1000)
+
+' strip header
+F.Intrinsic.Variable.UDTMultiFlag(V.uGlobal.uFile!Vendor,"Vendor")
+
+' strip blank lines
+F.Intrinsic.Variable.UDTMultiFlag(V.uGlobal.uFile!Vendor,"")
+
+F.Intrinsic.Variable.UDTDeleteFlagged(V.uGlobal.uFile)
+
+Program.Sub.Readfile.End
+
+Program.Sub.Writefile.Start
+
+' Create a fixed width file with fields:
+' EDI Buyer ID - "GE"
+' EDI Ship to - Blank
+' GSS Customer - Blank
+' Invoice Number - Blank
+' Transaction Code - 10
+' Invoice Date - column F (MMDDYY)
+' Transaction Date - column C (MMDDYY)
+' Invoice Total - column H
+' Transaction Amount - column J
+' Reference Number - column B
+' Exchange Date - Blank
+' Exchange Rate - Blank
+' Exchange Amoun - Blank
+' Ehange Invoice Total - Blank
+' Freight Amount - Blank
+' Tax Amount - Blank
+' Invoice Due Date - Blank
+' Discount Due Date - Blank
+' Invoice Discount - column I
+' Payment Type Check - CK
+' Prepaid Flag - Blank
+' Credit Memo Number - Blank
+' Packing Number - column E
+' Filename is EA820ccc where 'ccc' is company code
+
+
+V.Local.sRet.Declare(String)
+V.Local.sTxtFile.Declare(String)
+V.Local.iFor.Declare(Long)
+V.Local.sHold.Declare(String)
+V.Local.sSel.Declare(String)
+V.Local.sFiller1.Declare(String)
+V.Local.sFiller2.Declare(String)
+V.Local.sVal.Declare(String)
+V.Local.dDate.Declare(Date)
+
+F.Intrinsic.String.LPad(V.Local.sFiller1," ",119,V.Local.sFiller1)
+F.Intrinsic.String.LPad(V.Local.sFiller2," ",31,V.Local.sFiller2)
+
+F.ODBC.Connection!Con.OpenConnection(V.Ambient.PDSN,V.Ambient.PUser,V.Ambient.PPass)
+
+F.Intrinsic.UI.ChangeWaitStatus("Writing txt")
+F.Intrinsic.String.Concat(V.Caller.FilesDir,"\EA820",V.Caller.CompanyCode,V.Local.sTxtFile)
+
+F.Intrinsic.Variable.UDTSetMemberValue(V.uGlobal.uFile!Buyer,"GE")
+F.Intrinsic.Variable.UDTSetMemberValue(V.uGlobal.uFile!TransCode,"10")
+F.Intrinsic.Variable.UDTSetMemberValue(V.uGlobal.uFile!Type,"CK")
+
+F.Intrinsic.Variable.UDTMultiSeekSet(V.uGlobal.uFile!Discount,"",V.uGlobal.uFile!Discount,"0")
+
+
+' for each incoming line, add additional information, pad as necessary, and write line to ea820 file
+F.Intrinsic.Control.For(V.Local.iFor,V.uGlobal.uFile!Voucher.LBound,V.uGlobal.uFile!Voucher.UBound,1)
+
+	' Buyer (35)
+	F.Intrinsic.String.RPad(V.uGlobal.uFile(v.Local.iFor)!Buyer," ",35,V.uGlobal.uFile(v.Local.iFor)!Buyer)
+
+	' shipto (17)
+	F.Intrinsic.String.RPad(V.uGlobal.uFile(v.Local.iFor)!ShipTo," ",17,V.uGlobal.uFile(v.Local.iFor)!ShipTo)
+
+	' customer (7)
+	F.Intrinsic.String.RPad(V.uGlobal.uFile(v.Local.iFor)!Customer," ",7,V.uGlobal.uFile(v.local.iFor)!Customer)
+
+	' invoice No (7)
+	F.Intrinsic.String.RPad(V.uGlobal.uFile(v.Local.iFor)!InvNo," ",7,V.uGlobal.uFile(v.Local.iFor)!InvNo)
+
+	' invoice date
+	F.Intrinsic.Date.ConvertDString(V.uGlobal.uFile(v.Local.iFor)!InvDate,"yyyymmdd",V.Local.dDate)
+	F.Intrinsic.String.Format(V.Local.dDate,"MMDDYY",V.uGlobal.uFile(v.Local.iFor)!InvDate)
+
+	' Trans Date (6)
+	F.Intrinsic.Date.ConvertDString(V.uGlobal.uFile(v.Local.iFor)!TransDate,"yyyymmdd",V.Local.dDate)
+	F.Intrinsic.String.Format(V.Local.dDate,"MMDDYY",V.uGlobal.uFile(v.Local.iFor)!TransDate)
+
+	' Inv Total (19)
+	F.Intrinsic.String.Format(V.uGlobal.uFile(v.Local.iFor)!Gross,"0.0000",V.uGlobal.uFile(v.Local.iFor)!Gross)
+	F.Intrinsic.String.Left(V.uGlobal.uFile(v.Local.ifor)!Gross,1,V.Local.sVal)
+	F.Intrinsic.Control.If(V.Local.sVal,=,"-")
+		F.Intrinsic.String.Replace(V.uGlobal.uFile(v.Local.ifor)!Gross,"-","",V.uGlobal.uFile(v.Local.ifor)!Gross)
+		F.Intrinsic.String.LPad(V.uGlobal.uFile(v.Local.ifor)!Gross,"0",18,V.uGlobal.uFile(v.Local.ifor)!Gross)
+		F.Intrinsic.String.Concat("-",V.uGlobal.uFile(v.Local.iFor)!Gross,V.uGlobal.uFile(v.Local.iFor)!Gross)
+	F.Intrinsic.Control.Else
+		F.Intrinsic.String.LPad(V.uGlobal.uFile(v.Local.ifor)!Gross,"0",19,V.uGlobal.uFile(v.Local.ifor)!Gross)
+	F.Intrinsic.Control.EndIf
+
+	' Trans Amt (19; 0.00)
+	F.Intrinsic.String.Format(V.uGlobal.uFile(v.Local.iFor)!Net,"00000000000000.0000",V.uGlobal.uFile(v.Local.iFor)!Net)
+
+	' Reference Number (15)
+	F.Intrinsic.String.RPad(V.uGlobal.uFile(v.Local.iFor)!Voucher," ",15,V.uGlobal.uFile(v.Local.iFor)!Voucher)
+
+	' discount
+	F.Intrinsic.String.Replace(V.uGlobal.uFile(v.Local.iFor)!Discount,"-","",V.uGlobal.uFile(v.Local.iFor)!Discount)
+	F.Intrinsic.String.Format(V.uGlobal.uFile(v.Local.iFor)!Discount,"0.0000",V.uGlobal.uFile(v.Local.iFor)!Discount)
+	F.Intrinsic.String.LPad(V.uGlobal.uFile(v.Local.ifor)!Discount,"0",16,V.uGlobal.uFile(v.Local.ifor)!Discount)
+
+	' packing
+	F.Intrinsic.String.RPad(V.uGlobal.uFile(v.Local.iFor)!PackingNo," ",211,V.uGlobal.uFile(v.Local.iFor)!PackingNo)
+
+
+	' join fields
+	F.Intrinsic.Control.If(V.Local.sHold.Trim,=,"")
+		F.Intrinsic.String.Concat(V.uGlobal.uFile(v.Local.iFor)!Buyer,V.uGlobal.uFile(v.Local.iFor)!ShipTo,V.uGlobal.uFile(v.Local.iFor)!Customer,V.uGlobal.uFile(v.Local.iFor)!InvNo,V.uGlobal.uFile(v.Local.iFor)!TransCode,V.uGlobal.uFile(v.Local.iFor)!InvDate,V.uGlobal.uFile(v.Local.iFor)!TransDate,V.uGlobal.uFile(v.Local.iFor)!Gross,V.uGlobal.uFile(v.Local.iFor)!Net,V.uGlobal.uFile(v.Local.iFor)!Voucher,V.Local.sFiller1,V.uGlobal.uFile(v.Local.ifor)!Discount,V.uGlobal.uFile(v.Local.iFor)!Type,V.Local.sFiller2,V.uGlobal.uFile(v.Local.iFor)!PackingNo,V.Local.sHold)
+	F.Intrinsic.Control.Else
+		F.Intrinsic.String.Concat(V.Local.sHold,V.Ambient.NewLine,V.uGlobal.uFile(v.Local.iFor)!Buyer,V.uGlobal.uFile(v.Local.iFor)!ShipTo,V.uGlobal.uFile(v.Local.iFor)!Customer,V.uGlobal.uFile(v.Local.iFor)!InvNo,V.uGlobal.uFile(v.Local.iFor)!TransCode,V.uGlobal.uFile(v.Local.iFor)!InvDate,V.uGlobal.uFile(v.Local.iFor)!TransDate,V.uGlobal.uFile(v.Local.iFor)!Gross,V.uGlobal.uFile(v.Local.iFor)!Net,V.uGlobal.uFile(v.Local.iFor)!Voucher,V.Local.sFiller1,V.uGlobal.uFile(v.Local.ifor)!Discount,V.uGlobal.uFile(v.Local.iFor)!Type,V.Local.sFiller2,V.uGlobal.uFile(v.Local.iFor)!PackingNo,V.Local.sHold)
+	F.Intrinsic.Control.EndIf
+
+
+F.Intrinsic.Control.Next(V.Local.iFor)
+
+F.ODBC.Connection!Con.Close
+
+F.Intrinsic.File.String2File(V.Local.sTxtFile,V.Local.sHold)
+F.Intrinsic.UI.CloseWaitDialog
+
+Program.Sub.Writefile.End
+
+Program.Sub.unload.Start
+
+F.Intrinsic.Control.End
+
+Program.Sub.unload.End
+
+Program.Sub.Comments.Start
+${$0$}$GCG_GE_AR_Remit$}$JCT$}$10/1/2013
+${$3$}$0$}$$}$-1$}$-1$}$$}$1/1/1900$}$For Universal Metal Products
+Quote 3988
+Import xcel data, convert to  EA820 fixed width file
+excel layout is
+Vendor, Voucher, Date, Amount, Reference, Date, Order No, Gross, Discount, NetAmt, Comment
+Program.Sub.Comments.End
+

@@ -1,0 +1,639 @@
+Program.Sub.ScreenSU.Start
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+
+Variable.UDT.FileData.Define("Supplier",String)
+Variable.UDT.FileData.Define("Part",String)
+Variable.UDT.FileData.Define("Description",String)
+Variable.UDT.FileData.Define("UM",String)
+Variable.UDT.FileData.Define("ShipTo",String)
+Variable.UDT.FileData.Define("LastDate",String)
+Variable.UDT.FileData.Define("LastTime",String)
+Variable.UDT.FileData.Define("LastQty",String)
+Variable.UDT.FileData.Define("CumQty",String)
+Variable.UDT.FileData.Define("CurrBal",String)
+Variable.UDT.FileData.Define("PO",String)
+Variable.UDT.FileData.Define("PartComm",String)
+Variable.UDT.FileData.Define("AsOfDate",String)
+Variable.UDT.FileData.Define("AsOfTime",String)
+Variable.UDT.FileData.Define("DemandType",String)
+Variable.UDT.FileData.Define("ReqId",String)
+Variable.UDT.FileData.Define("Assembly",String)
+Variable.UDT.FileData.Define("Model",String)
+Variable.UDT.FileData.Define("Level",String)
+Variable.UDT.FileData.Define("ReqDate",String)
+Variable.UDT.FileData.Define("ReqTime",String)
+Variable.UDT.FileData.Define("ReqQty",String)
+Variable.UDT.FileData.Define("Net",String)
+Variable.UDT.FileData.Define("DecBal",String)
+Variable.UDT.FileData.Define("Seq",String)
+Variable.UDT.FileData.Define("ASN",String)
+Variable.UDT.FileData.Define("BOL",String)
+Variable.UDT.FileData.Define("DrawNo",String)
+Variable.UDT.FileData.Define("DrawRev",String)
+
+
+Variable.uGlobal.uFileData.Declare("FileData")
+
+Variable.UDT.EAHeader.Define("PO_Number",String)
+Variable.UDT.EAHeader.Define("Line_Number",String)
+Variable.UDT.EAHeader.Define("Buyer_ID",String)
+Variable.UDT.EAHeader.Define("Change_Order",String)
+Variable.UDT.EAHeader.Define("PO_Date",String)
+Variable.UDT.EAHeader.Define("Ship_Date",String)
+Variable.UDT.EAHeader.Define("Ship_To_Code",String)
+Variable.UDT.EAHeader.Define("Terms_Discnt",String)
+Variable.UDT.EAHeader.Define("Change_By_Date",String)
+Variable.UDT.EAHeader.Define("Release_Num",String)
+Variable.UDT.EAHeader.Define("Release_Start_Date",String)
+Variable.UDT.EAHeader.Define("Release_End_Date",String)
+Variable.UDT.EAHeader.Define("Hold_Type",String)
+Variable.UDT.EAHeader.Define("Change_Type",String)
+Variable.UDT.EAHeader.Define("Transaction",String)
+Variable.UDT.EAHeader.Define("Trading_Partner",String)
+Variable.UDT.EAHeader.Define("Price_From_Quote",String)
+Variable.UDT.EAHeader.Define("Accum_Rcpt",String)
+Variable.UDT.EAHeader.Define("Last_Recd_Qty",String)
+Variable.UDT.EAHeader.Define("Last_Recd_Date",String)
+Variable.UDT.EAHeader.Define("Filler",String)
+Variable.UDT.EAHeader.Define("Record_Type",String)
+Variable.UDT.EAHeader.Define("Conversion_Flag",String)
+Variable.uGlobal.uEAHeader.Declare("EAHeader")
+
+Variable.UDT.EALine.Define("Buyer_ID",String)
+Variable.UDT.EALine.Define("PO_Number",String)
+Variable.UDT.EALine.Define("Line_Number",String)
+Variable.UDT.EALine.Define("Change_Order",String)
+Variable.UDT.EALine.Define("Buyer_Part",String)
+Variable.UDT.EALine.Define("Buyer_Part_Loc",String)
+Variable.UDT.EALine.Define("Order_Qty",String)
+Variable.UDT.EALine.Define("UM",String)
+Variable.UDT.EALine.Define("Price",String)
+Variable.UDT.EALine.Define("Description",String)
+Variable.UDT.EALine.Define("Bulk_Num",String)
+Variable.UDT.EALine.Define("Bin_Num",String)
+Variable.UDT.EALine.Define("Accum_Rcpt",String)
+Variable.UDT.EALine.Define("In_Transit",String)
+Variable.UDT.EALine.Define("Last_Recpt_Qty",String)
+Variable.UDT.EALine.Define("Last_Recpt_Date",String)
+Variable.UDT.EALine.Define("PO_Line",String)
+Variable.UDT.EALine.Define("Write_Inventory",String)
+Variable.UDT.EALine.Define("Price_Check",String)
+Variable.UDT.EALine.Define("Long_Part_Num",String)
+Variable.UDT.EALine.Define("Mult_Qty",String)
+Variable.UDT.EALine.Define("MQD_Due_Date",String)
+Variable.UDT.EALine.Define("Order_Type",String)
+Variable.UDT.EALine.Define("Ship_To",String)
+Variable.UDT.EALine.Define("Old_Ship_To",String)
+Variable.UDT.EALine.Define("Hold_Type",String)
+Variable.UDT.EALine.Define("INFO1",String)
+Variable.UDT.EALine.Define("INFO2",String)
+Variable.UDT.EALine.Define("Change_Type",String)
+Variable.UDT.EALine.Define("Transaction",String)
+Variable.UDT.EALine.Define("USER1",String)
+Variable.UDT.EALine.Define("USER2",String)
+Variable.UDT.EALine.Define("USER3",String)
+Variable.UDT.EALine.Define("USER4",String)
+Variable.UDT.EALine.Define("Item_Promise_Date",String)
+Variable.UDT.EALine.Define("Line_Type",String)
+Variable.UDT.EALine.Define("Negative_Qty_Flag",String)
+Variable.UDT.EALine.Define("Trigger_Part_Flag",String)
+Variable.UDT.EALine.Define("Last_Shipment_Id",String)
+Variable.UDT.EALine.Define("Record_Type",String)
+Variable.UDT.EALine.Define("Conversion_Flag",String)
+Variable.UDT.EALine.Define("Site",String)
+Variable.uGlobal.uEALine.Declare("EALine")
+
+Variable.UDT.EAMqd.Define("Buyer_ID",String)
+Variable.UDT.EAMqd.Define("PO_Number",String)
+Variable.UDT.EAMqd.Define("Line_Number",String)
+Variable.UDT.EAMqd.Define("Change_Order",String)
+Variable.UDT.EAMqd.Define("Order_Qty",String)
+Variable.UDT.EAMqd.Define("DueDatePrev",String)
+Variable.UDT.EAMqd.Define("DueDate",String)
+Variable.UDT.EAMqd.Define("Order_Type",String)
+Variable.UDT.EAMqd.Define("Change_Type",String)
+Variable.UDT.EAMqd.Define("Info",String)
+Variable.UDT.EAMqd.Define("Filler",String)
+Variable.UDT.EAMqd.Define("Record_Type",String)
+Variable.UDT.EAMqd.Define("Conversion_Flag",String)
+Variable.UDT.EAMqd.Define("Item",String)
+Variable.UDT.EAMqd.Define("OrdQtyPrev",String)
+Variable.UDT.EAMqd.Define("Site",String)
+Variable.uGlobal.uEAMqd.Declare("EAMqd")
+
+Variable.UDT.HeaderCharLengths.Define("ElementName",String)
+Variable.UDT.HeaderCharLengths.Define("CharLength",Long)
+Variable.uGlobal.uHeaderCharLengths.Declare("HeaderCharLengths")
+
+Variable.UDT.LineCharLengths.Define("ElementName",String)
+Variable.UDT.LineCharLengths.Define("CharLength",Long)
+Variable.uGlobal.uLineCharLengths.Declare("LineCharLengths")
+
+Variable.UDT.MqdCharLengths.Define("ElementName",String)
+Variable.UDT.MqdCharLengths.Define("CharLength",Long)
+Variable.uGlobal.uMqdCharLengths.Declare("MqdCharLengths")
+
+Variable.Global.sFileElements.Declare(String)
+Variable.Global.sUserInputFile.Declare(String)
+Variable.Global.sInputDataArray.Declare(String)
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+
+V.Local.sMsg.Declare(String)
+
+F.Intrinsic.Control.CallSub(Clearudts)
+Function.Intrinsic.UI.InvokeWaitDialog("Reading upload file.")
+F.Intrinsic.Control.CallSub(Readfile)
+F.Intrinsic.Control.CallSub(Filterdata)
+
+F.Intrinsic.String.Concat("Writing EA850",V.Caller.CompanyCode," File",V.Local.sMsg)
+F.Intrinsic.UI.ChangeWaitStatus(V.Local.sMsg)
+
+F.Intrinsic.Control.CallSub(Eafile)
+F.Intrinsic.UI.CloseWaitDialog
+F.Intrinsic.Control.CallSub(Showsave)
+F.Intrinsic.Control.CallSub(Unload)
+
+Program.Sub.Main.End
+
+Program.Sub.readFile.Start
+F.Intrinsic.Control.SetErrorHandler("readFile_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.sRet.Declare(String)
+V.Local.sColumns.Declare(String)
+
+' openfile dialog to select file.
+F.Intrinsic.UI.ShowOpenFileDialog("","*.*","",V.Global.sUserInputFile)
+
+' if cancelled, end script, otherwise continue....
+F.Intrinsic.Control.If(V.Global.sUserInputFile,=,"***CANCEL***")
+	F.Intrinsic.Control.CallSub(Unload)
+F.Intrinsic.Control.EndIf
+
+Function.Intrinsic.UI.InvokeWaitDialog("Reading upload file.")
+
+' specify the field heading order, for loading data to the udt
+V.Global.sFileElements.Set("Supplier*!*Part*!*Description*!*UM*!*ShipTo*!*LastDate*!*LastTime*!*LastQty*!*CumQty*!*CurrBal*!*PO*!*PartComm*!*AsOfDate*!*AsOfTime*!*DemandType*!*ReqId*!*Assembly*!*Model*!*Level*!*ReqDate*!*ReqTime*!*ReqQty*!*Net*!*DecBal*!*Seq*!*ASN*!*BOL*!*DrawNo*!*DrawRev")
+
+' call appropriate sub for file type.
+F.Intrinsic.Control.CallSub(Textfilearray)
+
+' strip header
+F.Intrinsic.Variable.UDTMultiFlag(V.uGlobal.uFileData!Supplier,"Supplier Number")
+' strip blank lines
+F.Intrinsic.Variable.UDTMultiFlag(V.uGlobal.uFileData!Supplier,"")
+' 02/10/13 -- JCT -- change per quote 6406
+' remove records where declining balance is above zero
+F.Intrinsic.Variable.UDTMultiFlag(V.uGlobal.uFileData!DecBal,">::0")
+' delete all flagged lines
+F.Intrinsic.Variable.UDTDeleteFlagged(V.uGlobal.uFileData)
+
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("readFile_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3528_Juarez_EDI.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.readFile.End
+
+Program.Sub.unload.Start
+F.Intrinsic.Control.End
+
+Program.Sub.unload.End
+
+Program.Sub.filterData.Start
+
+'PO=columnK
+'SHIP_TO=column E
+'PART=columnB
+'DUE_DATE=columnT
+'QTY=columnV
+'STATUS=columnO()
+'BUYER_ID=column A
+
+F.Intrinsic.Control.SetErrorHandler("filterData_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.iFor.Declare(Long)
+V.Local.sLike.Declare(String)
+V.Local.sDate.Declare(String)
+V.Local.sQty.Declare(String)
+V.Local.sVal.Declare(String)
+
+' any code that starts with W will be Planned, others will be Firm
+V.Local.sLike.Set("LIKE::W?")
+F.Intrinsic.Variable.UDTMultiSeekSet(V.uGlobal.uFileData!DemandType,V.Local.sLike,V.uGlobal.uFileData!DemandType,"P")
+F.Intrinsic.Variable.UDTMultiSeekSet(V.uGlobal.uFileData!DemandType,"RS",V.uGlobal.uFileData!DemandType,"F")
+F.Intrinsic.Variable.UDTMultiSeekSet(V.uGlobal.uFileData!DemandType,"FO",V.uGlobal.uFileData!DemandType,"F")
+
+' redim udts to accept data
+V.uGlobal.uEAMqd.Redim(V.uGlobal.uFileData!Part.LBound,V.uGlobal.uFileData!Part.UBound)
+V.uGlobal.uEALine.Redim(V.uGlobal.uFileData.LBound,V.uGlobal.uFileData.UBound)
+V.uGlobal.uEAHeader.Redim(V.uGlobal.uFileData.LBound,V.uGlobal.uFileData.UBound)
+
+' set static Values
+F.Intrinsic.Variable.UDTSetMemberValue(V.uGlobal.uEAMQD!Line_Number,"**LINE**")
+F.Intrinsic.Variable.UDTSetMemberValue(V.uGlobal.uEAMqd!Record_Type,"M")
+
+F.Intrinsic.Variable.UDTSetMemberValue(V.uGlobal.uEALine!Line_Number,"**LINE**")
+F.Intrinsic.Variable.UDTSetMemberValue(V.uGlobal.uEALine!Order_Qty,"0")
+F.Intrinsic.Variable.UDTSetMemberValue(V.uGlobal.uEALine!Mult_Qty,"Y")
+F.Intrinsic.Variable.UDTSetMemberValue(V.uGlobal.uEALine!Record_Type,"1")
+
+F.Intrinsic.Variable.UDTSetMemberValue(V.uGlobal.uEAHeader!Record_Type,"H")
+F.Intrinsic.Variable.UDTSetMemberValue(V.uGlobal.uEAHeader!Line_Number,"000")
+F.Intrinsic.Variable.UDTSetMemberValue(V.uGlobal.uEAHeader!Accum_Rcpt,"0000000000")
+
+F.Intrinsic.Control.For(V.Local.iFor,0,V.uGlobal.uFileData!Part.UBound,1)
+'==========MQD==
+	V.uGlobal.uEAMqd(v.Local.iFor)!Buyer_ID.Set(V.uGlobal.uFileData(v.Local.iFor)!Supplier)
+	V.uGlobal.uEAMqd(v.Local.iFor)!PO_Number.Set(V.uGlobal.uFileData(v.Local.iFor)!PO)
+'	F.Intrinsic.String.Split(V.uGlobal.uFileData(v.Local.iFor)!ReqQty,".",V.Local.sQTY)
+'	V.Local.sQTY.RedimPreserve(0,1)
+'	F.Intrinsic.String.RPad(V.Local.sQTY(1),"0",4,V.Local.sQTY(1))
+'	F.Intrinsic.String.LPad(V.Local.sQTY(0),"0",8,V.Local.sQTY(0))
+'	F.Intrinsic.String.Concat(V.Local.sQTY(0),V.Local.sQTY(1),V.Local.sVal)
+	F.Intrinsic.String.Format(V.uGlobal.uFileData(v.Local.iFor)!Net,"0.0000",V.Local.sVal)
+	F.Intrinsic.String.Replace(V.Local.sVal,".","",V.Local.sVal)
+	F.Intrinsic.String.LPad(V.Local.sVal,"0",12,V.Local.sVal)
+	V.uGlobal.uEAMqd(v.Local.iFor)!Order_Qty.Set(V.Local.sVal)
+	V.uGlobal.uEAMqd(v.Local.iFor)!Order_Type.Set(V.uGlobal.uFileData(v.Local.iFor)!DemandType)
+	V.uGlobal.uEAMqd(v.Local.iFor)!Item.Set(V.uGlobal.uFileData(v.Local.iFor)!Part)
+	V.uGlobal.uEAMqd(v.Local.iFor)!Site.Set(V.uGlobal.uFileData(v.Local.iFor)!ShipTo)
+	F.Intrinsic.String.Format(V.uGlobal.uFileData(v.Local.iFor)!ReqDate,"YYYYMMDD",V.Local.sDate)
+	V.uGlobal.uEAMqd(v.Local.iFor)!DueDate.Set(V.Local.sDate)
+
+'============LINE==
+	V.uGlobal.uEALine(v.Local.iFor)!Buyer_ID.Set(V.uGlobal.uFileData(v.Local.iFor)!Supplier)
+	V.uGlobal.uEALine(v.Local.iFor)!Ship_To.Set(V.uGlobal.uFileData(v.Local.iFor)!ShipTo)
+	V.uGlobal.uEALine(v.Local.iFor)!PO_Number.Set(V.uGlobal.uFileData(v.Local.iFor)!PO)
+	V.uGlobal.uEALine(v.Local.iFor)!Buyer_Part.Set(V.uGlobal.uFileData(v.Local.iFor)!Part)
+	V.uGlobal.uEALine(v.Local.iFor)!Mult_Qty.Set("Y")
+
+'==========HEADER==
+	V.uGlobal.uEAHeader(v.Local.iFor)!Buyer_ID.set(V.uGlobal.uFileData(v.Local.iFor)!Supplier)
+	V.uGlobal.uEAHeader(v.Local.iFor)!PO_Number.Set(V.uGlobal.uFileData(v.Local.iFor)!PO)
+	V.uGlobal.uEAHeader(v.Local.iFor)!Ship_To_Code.Set(V.uGlobal.uFileData(v.Local.iFor)!ShipTo)
+F.Intrinsic.Control.Next(V.Local.iFor)
+
+
+' remove duplicate Header and Lline records, and records with no PO number.  No PO will be on excel file header row
+F.Intrinsic.Variable.UDTMultiQuickSort(V.uGlobal.uEAHeader!Ship_To_Code,False,V.uGlobal.uEAHeader!PO_Number,False)
+F.Intrinsic.Variable.UDTMultiFlagDuplicates(V.uGlobal.uEAHeader!PO_Number,V.uGlobal.uEAHeader!Ship_To_Code)
+F.Intrinsic.Variable.UDTMultiFlag(V.uGlobal.uEAHeader!PO_Number,"")
+F.Intrinsic.Variable.UDTDeleteFlagged(V.uGlobal.uEAHeader)
+
+F.Intrinsic.Variable.UDTMultiQuickSort(V.uGlobal.uEALine!PO_Number,False,V.uGlobal.uEALine!Ship_To,False,V.uGlobal.uEALine!Buyer_Part,False,V.uGlobal.uEALine!Order_Type,False)
+F.Intrinsic.Variable.UDTMultiFlagDuplicates(V.uGlobal.uEALine!PO_Number,V.uGlobal.uEALine!Ship_To,V.uGlobal.uEALine!Buyer_Part,V.uGlobal.uEALine!Order_Type)
+F.Intrinsic.Variable.UDTMultiFlag(V.uGlobal.uEALine!PO_Number,"")
+F.Intrinsic.Variable.UDTDeleteFlagged(V.uGlobal.uEALine)
+
+F.Intrinsic.Variable.UDTMultiFlag(V.uGlobal.uEAMQD!PO_Number,"")
+F.Intrinsic.Variable.UDTDeleteFlagged(V.uGlobal.uEAMQD)
+F.Intrinsic.Control.If(V.uGlobal.uEAHeader!PO_Number.UBound,=,-1)
+	F.Intrinsic.Control.CallSub(Unload)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("filterData_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3528_Juarez_EDI.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.Debug.SetLA(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+Program.Sub.filterData.End
+
+Program.Sub.showSave.Start
+F.Intrinsic.Control.SetErrorHandler("showSave_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.sUploadFile.Declare(String)
+V.Local.bExists.Declare(Boolean)
+V.Local.sRet.Declare(String)
+V.Local.sMsg.Declare(String)
+V.Local.iRet.Declare(Long)
+
+F.Intrinsic.String.Concat(V.Caller.FilesDir,"\EA850",V.Caller.CompanyCode,V.Local.sUploadFile)
+F.Intrinsic.File.Exists(V.Local.sUploadFile,V.Local.bExists)
+F.Intrinsic.Control.If(V.Local.bExists,=,False)
+	F.Intrinsic.String.Concat("EA850",V.Caller.CompanyCode," File Not Created",V.Local.sMsg)
+	F.Intrinsic.UI.Msgbox(V.Local.sMsg)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.UI.ShowSaveFileDialog(V.Local.sUploadFile,"",V.Local.sRet)
+F.Intrinsic.File.MoveFile(V.Local.sUploadFile,V.Local.sRet,V.Local.iRet)
+
+
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("showSave_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3528_Juarez_EDI.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.showSave.End
+
+Program.Sub.clearUdts.Start
+F.Intrinsic.Control.SetErrorHandler("clearUdts_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+
+V.uGlobal.uEAHeader.Redim(-1,-1)
+V.uGlobal.uEALine.Redim(-1,-1)
+V.uGlobal.uEAMqd.Redim(-1,-1)
+V.uGlobal.uHeaderCharLengths.Redim(-1,-1)
+V.uGlobal.uLineCharLengths.Redim(-1,-1)
+V.uGlobal.uFileData.Redim(-1,-1)
+
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("clearUdts_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3528_Juarez_EDI.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.clearUdts.End
+
+Program.Sub.eaFile.Start
+
+F.Intrinsic.Control.SetErrorHandler("EAFile_Err")
+F.Intrinsic.Control.ClearErrors
+
+
+V.Local.sError.Declare(String)
+V.Local.sUploadFile.Declare(String)
+V.Local.iFor.Declare(Long)
+V.Local.iForLine.Declare(Long)
+V.Local.iForMqd.Declare(Long)
+V.Local.sRet.Declare(String)
+V.Local.sMqdRet.Declare(String)
+V.Local.sLine.Declare(String)
+V.Local.sHeader.Declare(String)
+V.Local.sMqd.Declare(String)
+V.Local.iHndl.Declare(Long)
+V.Local.iHLine.Declare(Long)
+V.Local.iLLine.Declare(Long)
+V.Local.sLLine.Declare(String)
+V.Local.iMqd.Declare(Long)
+V.Local.sMQDElements.Declare(String)
+V.Local.sMqdUDT.Declare(String)
+V.Local.sHeaderElements.Declare(String)
+V.Local.sLineElements.Declare(String)
+V.Local.sHeadUDT.Declare(String)
+V.Local.sLineUDT.Declare(String)
+V.Local.sHeaderFields.Declare(String)
+V.Local.sLineFields.Declare(String)
+V.Local.sMQDFields.Declare(String)
+V.Local.sShipTo.Declare(String)
+V.Local.sPO.Declare(String)
+V.Local.sPart.Declare(String)
+
+' put the udts into strings, for the positional array write
+F.Intrinsic.String.Concat(V.Local.sHeaderElements,"Buyer_ID*!*PO_NUMBER*!*Line_Number*!*Change_Order*!*PO_Date*!*Ship_Date*!*Ship_To_Code*!*Terms_Discnt*!*",V.Local.sHeaderElements)
+F.Intrinsic.String.Concat(V.Local.sHeaderElements,"Change_By_Date*!*Release_Num*!*Release_Start_Date*!*Release_End_Date*!*Hold_Type*!*Change_Type*!*Transaction*!*",V.Local.sHeaderElements)
+F.Intrinsic.String.Concat(V.Local.sHeaderElements,"Trading_Partner*!*Price_From_Quote*!*Accum_Rcpt*!*Last_Recd_Qty*!*Last_Recd_Date*!*Filler*!*Record_Type*!*Conversion_Flag",V.Local.sHeaderElements)
+f.Intrinsic.Variable.UDTToString(v.uGlobal.uEAHeader,v.Local.sHeaderElements,v.Ambient.NewLine,"*!*",v.Local.sHeadUDT)
+F.Intrinsic.String.Split(V.Local.sHeadUDT,V.Ambient.NewLine,V.Local.sHeaderFields)
+
+F.Intrinsic.String.Concat(V.Local.sLineElements,"Buyer_ID*!*PO_Number*!*Line_Number*!*Change_Order*!*Buyer_Part*!*Buyer_Part_Loc*!*Order_Qty*!*UM*!*",V.Local.sLineElements)
+F.Intrinsic.String.Concat(V.Local.sLineElements,"Price*!*Description*!*Bulk_Num*!*Bin_Num*!*Accum_Rcpt*!*In_Transit*!*Last_Recpt_Qty*!*Last_Recpt_Date*!*PO_Line*!*",V.Local.sLineElements)
+F.Intrinsic.String.Concat(V.Local.sLineElements,"Write_Inventory*!*Price_Check*!*Long_Part_Num*!*Mult_Qty*!*MQD_Due_Date*!*Order_Type*!*Ship_To*!*Old_Ship_To*!*",V.Local.sLineElements)
+F.Intrinsic.String.Concat(V.Local.sLineElements,"Hold_Type*!*INFO1*!*INFO2*!*Change_Type*!*Transaction*!*USER1*!*USER2*!*USER3*!*USER4*!*Item_Promise_Date*!*",V.Local.sLineElements)
+F.Intrinsic.String.Concat(V.Local.sLineElements,"Line_Type*!*Negative_Qty_Flag*!*Trigger_Part_Flag*!*Last_Shipment_Id*!*Record_Type*!*Conversion_Flag",V.Local.sLineElements)
+f.Intrinsic.Variable.UDTToString(v.uGlobal.uEALine,v.Local.sLineElements,v.Ambient.NewLine,"*!*",v.Local.sLineUDT)
+F.Intrinsic.String.Split(V.Local.sLineUDT,V.Ambient.NewLine,V.Local.sLineFields)
+
+F.Intrinsic.String.Concat(V.Local.sMQDElements,"Buyer_ID*!*PO_Number*!*Line_Number*!*Change_Order*!*OrdQtyPrev*!*Order_Qty*!*DueDatePrev*!*DueDate*!*",V.Local.sMQDElements)
+F.Intrinsic.String.Concat(V.Local.sMQDElements,"Order_Type*!*Change_Type*!*Info*!*Filler*!*Record_Type*!*Conversion_Flag",V.Local.sMQDElements)
+f.Intrinsic.Variable.UDTToString(v.uGlobal.uEAMqd,v.Local.sMQDElements,v.Ambient.NewLine,"*!*",V.Local.sMqdUDT)
+F.Intrinsic.String.Split(V.Local.sMqdUDT,V.Ambient.NewLine,V.Local.sMQDFields)
+
+
+' define upload file path
+F.Intrinsic.String.Concat(V.Caller.FilesDir,"\EA850",V.Caller.CompanyCode,V.Local.sUploadFile)
+F.Intrinsic.File.GetHandle(V.Local.iHndl)
+F.Intrinsic.File.OpenForWrite(V.Local.sUploadFile,V.Local.iHndl)
+
+' for each header record
+F.Intrinsic.Control.For(V.Local.iFor,V.uGlobal.uEAHeader!Ship_To_Code.LBound,V.uGlobal.uEAHeader!Ship_To_Code.UBound,1)
+	' format the header values
+	F.Intrinsic.Control.CallSub(Formatheaderfields,"FIELDS",V.Local.sHeaderFields(v.Local.iFor))
+	V.Local.sHeader.Set(V.Args.REC)
+	' write the line
+	F.Intrinsic.File.WriteLine(V.Local.iHndl,V.Local.sHeader)
+
+'=== look for corresponding lines; need to look before the fields are ppadded, because it somehow doesn't work after they are :|
+	V.Local.sShipto.Set(V.uGlobal.uEAHeader(v.Local.iFor)!Ship_To_Code)
+	V.Local.sPO.Set(V.uGlobal.uEAHeader(v.Local.iFor)!PO_Number)
+	F.Intrinsic.Variable.UDTMultiSeek(V.uGlobal.uEALine!Ship_To,V.Local.sShipto.Trim,V.uGlobal.uEALine!PO_Number,V.Local.sPO.Trim,V.Local.sRet)
+
+	F.Intrinsic.Variable.UDTMultiSeek(V.uGlobal.uEALine!PO_Number,V.Local.sPO.Trim,V.Local.sRet)
+	' should get a return,but check, just in case
+	F.Intrinsic.Control.If(V.Local.sRet.Trim,<>,"")
+		' reset line number to start at 1
+		V.Local.iLLine.Set(0)
+		' split the rest and add a new line for each detail record
+		F.Intrinsic.String.Split(V.Local.sRet,"*!*",V.Local.sRet)
+		F.Intrinsic.Control.For(V.Local.iForLine,V.Local.sRet.LBound,V.Local.sRet.UBound,1)
+			' increment ilne
+			F.Intrinsic.Math.Add(V.Local.iLLine,1,V.Local.iLLine)
+			' if the line number is graeter than 999, add new header and reset line to 1
+			F.Intrinsic.Control.If(V.Local.iLLine,>,999)
+				' write new header
+				F.Intrinsic.File.WriteLine(V.Local.iHndl,V.Local.sHeader)
+				' reset line to 1
+				V.Local.iLLine.Set(1)
+			F.Intrinsic.Control.EndIf
+
+			' format the line fields
+			F.Intrinsic.String.LPad(V.Local.iLLine,"0",3,V.Local.sLLine)
+			F.Intrinsic.String.Replace(V.Local.sLineFields(v.Local.sRet(v.Local.iForLine)),"**LINE**",V.Local.sLLine,V.Local.sLineFields(v.Local.sRet(v.Local.iForLine)))
+			F.Intrinsic.Control.CallSub(Formatlinefields,"FIELDS",V.Local.sLineFields(v.Local.sRet(v.Local.iForLine)))
+
+			' create line record
+			V.Local.sLine.Set(V.Args.REC)
+			' write line
+			F.Intrinsic.File.WriteLine(V.Local.iHndl,V.Local.sLine)
+
+'========== look for MQD (Ship Schedule) lines
+			V.Local.sShipto.Set(V.uGlobal.uEALine(V.Local.sRet(v.Local.iForLine))!Ship_To)
+			V.Local.sPart.Set(V.uGlobal.uEALine(V.Local.sRet(v.Local.iForLine))!Buyer_Part)
+			V.Local.sPO.Set(V.uGlobal.uEALine(V.Local.sRet(v.Local.iForLine))!PO_Number)
+			F.Intrinsic.Variable.UDTMultiSeek(V.uGlobal.uEAMqd!Site,V.Local.sShipto.Trim,V.uGlobal.uEAMqd!Item,V.Local.sPart.Trim,V.uGlobal.uEAMqd!PO_Number,V.uGlobal.uEALine(V.Local.sRet(v.Local.iForLine))!PO_Number,V.Local.sMqdRet)
+			F.Intrinsic.Control.If(V.Local.sMqdRet.Trim,<>,"")
+				V.Local.iMqd.Set(0)
+				F.Intrinsic.String.Split(V.Local.sMqdRet,"*!*",V.Local.sMqdRet)
+				F.Intrinsic.Control.For(V.Local.iForMqd,V.Local.sMqdRet.LBound,V.Local.sMqdRet.UBound,1)
+					' format the MQD fields
+					F.Intrinsic.String.Replace(V.Local.sMQDFields(v.Local.sMQDRet(v.Local.iForMqd)),"**LINE**",V.Local.sLLine,V.Local.sMQDFields(v.Local.sMQDRet(v.Local.iForMqd)))
+					F.Intrinsic.Control.CallSub(Formatmqdfields,"FIELDS",V.Local.sMQDFields(v.Local.sMQDRet(v.Local.iForMqd)))
+					V.Local.sMqd.Set(V.Args.REC)
+
+					' write the line
+					F.Intrinsic.File.WriteLine(V.Local.iHndl,V.Local.sMqd)
+				F.Intrinsic.Control.Next(V.Local.iForMqd)
+
+			F.Intrinsic.Control.EndIf
+		F.Intrinsic.Control.Next(V.Local.iForLine)
+	F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.Next(V.Local.iFor)
+
+F.Intrinsic.File.CloseFile(V.Local.iHndl)
+
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("EAFile_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3528_Juarez_EDI.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+
+
+Program.Sub.eaFile.End
+
+Program.Sub.formatHeaderFields.Start
+F.Intrinsic.Control.SetErrorHandler("formatHeaderFields_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.sRec.Declare(String)
+V.Local.sHeaderElementLengths.Declare(String)
+V.Local.sHeaderValues.Declare(String)
+
+F.Intrinsic.String.Split("35|*|15|*| 3|*|1|*|8|*|8|*|17|*|8|*|1|*|25|*|8|*|8|*|1|*|1|*|3|*|3|*|1|*|10|*|10|*|8|*|336|*|1|*|1","|*|",V.Local.sHeaderElementLengths)
+F.Intrinsic.String.Split(V.Args.FIELDS,"*!*",V.Local.sHeaderValues)
+F.Intrinsic.String.PositionalString(V.Local.sHeaderValues,V.Local.sHeaderElementLengths,V.Local.sRec)
+F.Intrinsic.Variable.AddRV("REC",V.Local.sRec)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("formatHeaderFields_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3528_Juarez_EDI.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.formatHeaderFields.End
+
+Program.Sub.formatLineFields.Start
+F.Intrinsic.Control.SetErrorHandler("formatLineFields_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.sRec.Declare(String)
+V.Local.sLineElementLengths.Declare(String)
+V.Local.sLineValues.Declare(String)
+
+F.Intrinsic.String.Split("35|*|15|*|3|*|1|*|20|*|2|*|12|*|2|*|13|*|30|*|30|*|30|*|8|*|8|*|8|*|8|*|3|*|1|*|1|*|35|*|1|*|8|*|1|*|17|*|17|*|1|*|20|*|20|*|1|*|3|*|30|*|30|*|30|*|30|*|8|*|1|*|1|*|1|*|25|*|1|*|1","|*|",V.Local.sLineElementLengths)
+F.Intrinsic.String.Split(V.Args.FIELDS,"*!*",V.Local.sLineValues)
+F.Intrinsic.String.PositionalString(V.Local.sLineValues,V.Local.sLineElementLengths,V.Local.sRec)
+F.Intrinsic.Variable.AddRV("REC",V.Local.sRec)
+
+
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("formatLineFields_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3528_Juarez_EDI.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.formatLineFields.End
+
+Program.Sub.formatMqdFields.Start
+F.Intrinsic.Control.SetErrorHandler("formatMqdFields_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.sRec.Declare(String)
+V.Local.sLineValues.Declare(String)
+V.Local.sMQDElementLengths.Declare(String)
+
+
+F.Intrinsic.String.Split("35|*|15|*|3|*|1|*|12|*|12|*|8|*|8|*|1|*|1|*|30|*|384|*|1|*|1","|*|",V.Local.sMQDElementLengths)
+F.Intrinsic.String.Split(V.Args.FIELDS,"*!*",V.Local.sLineValues)
+F.Intrinsic.String.PositionalString(V.Local.sLineValues,V.Local.sMQDElementLengths,V.Local.sRec)
+F.Intrinsic.Variable.AddRV("REC",V.Local.sRec)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("formatMqdFields_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3528_Juarez_EDI.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.formatMqdFields.End
+
+Program.Sub.textFileArray.Start
+F.Intrinsic.Control.SetErrorHandler("textFileArray_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+V.Local.iCount.Declare(Long)
+V.Local.sTemp.Declare(String)
+V.Local.iCharCount.Declare(Long)
+V.Local.sSep.Declare(String)
+
+F.Intrinsic.File.File2String(V.Global.sUserInputFile,V.Global.sInputDataArray)
+F.Intrinsic.String.Split(V.Global.sInputDataArray,V.Ambient.NewLine,V.Local.sTemp)
+
+F.Intrinsic.String.Occurs(v.Local.sTemp(0),V.ASCII.44,V.Local.iCharCount)
+F.Intrinsic.Control.If(V.Local.iCharCount,>=,2)
+V.Local.sSep.Set(",")
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Occurs(v.Local.sTemp(0),V.ASCII.9,V.Local.iCharCount)
+F.Intrinsic.Control.If(V.Local.iCharCount,>=,2)
+V.Local.sSep.Set(V.Ambient.Tab)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Occurs(v.Local.sTemp(0),V.ASCII.126,V.Local.iCharCount)
+F.Intrinsic.Control.If(V.Local.iCharCount,>=,2)
+V.Local.sSep.Set("~")
+F.Intrinsic.Control.EndIf
+
+' put values into udt
+F.Intrinsic.Variable.LoadUDTFromString(V.uGlobal.uFileData,V.Global.sFileElements,V.Global.sInputDataArray,V.Ambient.NewLine,V.Local.sSep,False,1000)
+
+
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("textFileArray_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_3528_Juarez_EDI.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.textFileArray.End
+
+

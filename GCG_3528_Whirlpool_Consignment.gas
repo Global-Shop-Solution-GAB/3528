@@ -1,0 +1,97 @@
+Program.Sub.ScreenSU.Start
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+
+F.Intrinsic.Control.CallSub(Readfile)
+F.Intrinsic.Control.CallSub(Loadfile)
+F.Intrinsic.Control.CallSub(Unload)
+
+Program.Sub.Main.End
+
+Program.Sub.Unload.Start
+
+
+F.Intrinsic.Control.End
+
+Program.Sub.Unload.End
+
+Program.Sub.readFile.Start
+
+V.Local.sFromFile.Declare(String)
+V.Local.sColumns.Declare(String)
+V.Local.sToFIle.Declare(String)
+
+' openfile dialog to select file.
+F.Intrinsic.UI.ShowOpenFileDialog("","*.*","",V.Local.sFromFile)
+
+' if cancelled, end script, otherwise continue....
+F.Intrinsic.Control.If(V.Local.sFromFile,=,"***CANCEL***")
+	F.Intrinsic.Control.CallSub(Unload)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Concat(V.Caller.FilesDir,"\UC",V.Caller.Terminal,V.Caller.CompanyCode,".txt",V.Local.sToFile)
+
+' need to be sure the part on the incoming file is the correct GSS part
+F.Intrinsic.Control.CallSub(Updateparts,"FILE",V.Local.sFromFile)
+
+F.Intrinsic.File.CopyFile(V.Local.sFromFile,V.Local.sToFile)
+F.Intrinsic.File.DeleteFile(V.Local.sFromFile)
+
+Program.Sub.readFile.End
+
+Program.Sub.loadFile.Start
+
+
+F.Global.General.CallWrappersync(50,"CSNUPMNU")
+F.Global.General.CallWrappersync(50,"SHP400")
+
+Program.Sub.loadFile.End
+
+Program.Sub.updateParts.Start
+
+V.Local.sFile.Declare(String)
+V.Local.sSel.Declare(String)
+V.Local.sRet.Declare(String)
+V.Local.sFields.Declare(String)
+V.Local.iFor.Declare(Long)
+V.Local.sRetFile.Declare(String)
+
+
+F.ODBC.Connection!Con.OpenConnection(V.Ambient.PDSN,V.Ambient.PUser,V.Ambient.PPass)
+F.Intrinsic.File.File2String(V.Args.FILE,V.Local.sFile)
+F.Intrinsic.String.Split(V.Local.sFile,V.Ambient.NewLine,V.Local.sFile)
+F.Intrinsic.Control.For(V.Local.iFor,V.Local.sFile.LBound,V.Local.sFile.UBound,1)
+	F.Intrinsic.String.SplitCSV(V.Local.sFile(v.Local.iFor),V.Local.sFields)
+
+	F.Intrinsic.String.Concat("select Part from Inv_Cross_Ref where Customer_Part ='",V.Local.sFields(0).Trim,"' ",V.Local.sSel)
+	F.ODBC.Connection!Con.ExecuteAndReturn(V.Local.sSel,V.Local.sRet)
+
+	' if cross ref part not found, leave it as the part on the incoming file
+	F.Intrinsic.Control.If(V.Local.sRet.Trim,<>,"")
+		F.Intrinsic.String.Split(V.Local.sRet,"#$#",V.Local.sRet)
+		F.Intrinsic.String.Split(V.Local.sRet(0),"*!*",V.Local.sRet)
+		V.Local.sFields(0).Set(V.Local.sRet(0))
+	F.Intrinsic.Control.EndIf
+
+	F.Intrinsic.String.Join(V.Local.sFields,",",V.Local.sFields)
+	F.Intrinsic.String.Concat(V.Local.sRetFile,V.Local.sFields,V.Ambient.NewLine,V.Local.sRetFile)
+
+F.Intrinsic.Control.Next(V.Local.iFor)
+
+F.ODBC.Connection!Con.Close
+F.Intrinsic.File.String2File(V.Args.FILE,V.Local.sRetFile)
+
+Program.Sub.updateParts.End
+
+Program.Sub.Comments.Start
+${$0$}$GCG_Whirlpool_Consignment$}$JCT$}$7/10/2013
+${$3$}$0$}$$}$-1$}$-1$}$$}$1/1/1900$}$For Universal Metal Products
+Quote 3988
+rename selected file to UCtttccc.txt, save to the Global\Files
+Program.Sub.Comments.End
+

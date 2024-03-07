@@ -1,0 +1,502 @@
+Program.Sub.Preflight.Start
+
+Variable.UDT.EAHeader.Define("PO_Number",String)
+Variable.UDT.EAHeader.Define("Line_Number",String)
+Variable.UDT.EAHeader.Define("Buyer_ID",String)
+Variable.UDT.EAHeader.Define("Change_Order",String)
+Variable.UDT.EAHeader.Define("PO_Date",String)
+Variable.UDT.EAHeader.Define("Ship_Date",String)
+Variable.UDT.EAHeader.Define("Ship_To_Code",String)
+Variable.UDT.EAHeader.Define("Terms_Discnt",String)
+Variable.UDT.EAHeader.Define("Change_By_Date",String)
+Variable.UDT.EAHeader.Define("Release_Num",String)
+Variable.UDT.EAHeader.Define("Release_Start_Date",String)
+Variable.UDT.EAHeader.Define("Release_End_Date",String)
+Variable.UDT.EAHeader.Define("Hold_Type",String)
+Variable.UDT.EAHeader.Define("Change_Type",String)
+Variable.UDT.EAHeader.Define("Transaction",String)
+Variable.UDT.EAHeader.Define("Trading_Partner",String)
+Variable.UDT.EAHeader.Define("Price_From_Quote",String)
+Variable.UDT.EAHeader.Define("Accum_Rcpt",String)
+Variable.UDT.EAHeader.Define("Last_Recd_Qty",String)
+Variable.UDT.EAHeader.Define("Last_Recd_Date",String)
+Variable.UDT.EAHeader.Define("Filler",String)
+Variable.UDT.EAHeader.Define("Record_Type",String)
+Variable.UDT.EAHeader.Define("Conversion_Flag",String)
+Variable.uGlobal.uEAHeader.Declare("EAHeader")
+
+Variable.UDT.EALine.Define("Buyer_ID",String)
+Variable.UDT.EALine.Define("PO_Number",String)
+Variable.UDT.EALine.Define("Line_Number",String)
+Variable.UDT.EALine.Define("Change_Order",String)
+Variable.UDT.EALine.Define("Buyer_Part",String)
+Variable.UDT.EALine.Define("Buyer_Part_Loc",String)
+Variable.UDT.EALine.Define("Order_Qty",String)
+Variable.UDT.EALine.Define("UM",String)
+Variable.UDT.EALine.Define("Price",String)
+Variable.UDT.EALine.Define("Description",String)
+Variable.UDT.EALine.Define("Bulk_Num",String)
+Variable.UDT.EALine.Define("Bin_Num",String)
+Variable.UDT.EALine.Define("Accum_Rcpt",String)
+Variable.UDT.EALine.Define("In_Transit",String)
+Variable.UDT.EALine.Define("Last_Recpt_Qty",String)
+Variable.UDT.EALine.Define("Last_Recpt_Date",String)
+Variable.UDT.EALine.Define("PO_Line",String)
+Variable.UDT.EALine.Define("Write_Inventory",String)
+Variable.UDT.EALine.Define("Price_Check",String)
+Variable.UDT.EALine.Define("Long_Part_Num",String)
+Variable.UDT.EALine.Define("Mult_Qty",String)
+Variable.UDT.EALine.Define("MQD_Due_Date",String)
+Variable.UDT.EALine.Define("Order_Type",String)
+Variable.UDT.EALine.Define("Ship_To",String)
+Variable.UDT.EALine.Define("Old_Ship_To",String)
+Variable.UDT.EALine.Define("Hold_Type",String)
+Variable.UDT.EALine.Define("INFO1",String)
+Variable.UDT.EALine.Define("INFO2",String)
+Variable.UDT.EALine.Define("Change_Type",String)
+Variable.UDT.EALine.Define("Transaction",String)
+Variable.UDT.EALine.Define("USER1",String)
+Variable.UDT.EALine.Define("USER2",String)
+Variable.UDT.EALine.Define("USER3",String)
+Variable.UDT.EALine.Define("USER4",String)
+Variable.UDT.EALine.Define("Item_Promise_Date",String)
+Variable.UDT.EALine.Define("Line_Type",String)
+Variable.UDT.EALine.Define("Negative_Qty_Flag",String)
+Variable.UDT.EALine.Define("Trigger_Part_Flag",String)
+Variable.UDT.EALine.Define("Last_Shipment_Id",String)
+Variable.UDT.EALine.Define("Record_Type",String)
+Variable.UDT.EALine.Define("Conversion_Flag",String)
+Variable.uGlobal.uEALine.Declare("EALine")
+
+
+Variable.UDT.HeaderCharLengths.Define("ElementName",String)
+Variable.UDT.HeaderCharLengths.Define("CharLength",Long)
+Variable.uGlobal.uHeaderCharLengths.Declare("HeaderCharLengths")
+
+Variable.UDT.LineCharLengths.Define("ElementName",String)
+Variable.UDT.LineCharLengths.Define("CharLength",Long)
+Variable.uGlobal.uLineCharLengths.Declare("LineCharLengths")
+
+Variable.UDT.EAMqd.Define("Buyer_ID",String)
+Variable.UDT.EAMqd.Define("PO_Number",String)
+Variable.UDT.EAMqd.Define("Line_Number",String)
+Variable.UDT.EAMqd.Define("Change_Order",String)
+Variable.UDT.EAMqd.Define("Order_Qty",String)
+Variable.UDT.EAMqd.Define("DueDatePrev",String)
+Variable.UDT.EAMqd.Define("DueDate",String)
+Variable.UDT.EAMqd.Define("Order_Type",String)
+Variable.UDT.EAMqd.Define("Change_Type",String)
+Variable.UDT.EAMqd.Define("Info",String)
+Variable.UDT.EAMqd.Define("Filler",String)
+Variable.UDT.EAMqd.Define("Record_Type",String)
+Variable.UDT.EAMqd.Define("Conversion_Flag",String)
+Variable.UDT.EAMqd.Define("Item",String)
+Variable.UDT.EAMqd.Define("OrdQtyPrev",String)
+Variable.uGlobal.uEAMqd.Declare("EAMqd")
+Variable.UDT.MqdCharLengths.Define("ElementName",String)
+Variable.UDT.MqdCharLengths.Define("CharLength",Long)
+
+Variable.uGlobal.uMqdCharLengths.Declare("MqdCharLengths")
+
+Program.Sub.Preflight.End
+
+Program.Sub.ClearUDTs.Start
+
+V.uGlobal.uEAHeader.Redim(-1,-1)
+V.uGlobal.uEALine.Redim(-1,-1)
+V.uGlobal.uEAMqd.Redim(-1,-1)
+V.uGlobal.uHeaderCharLengths.Redim(-1,-1)
+V.uGlobal.uLineCharLengths.Redim(-1,-1)
+V.uGlobal.uFileData.Redim(-1,-1)
+
+
+Program.Sub.ClearUDTs.End
+
+Program.Sub.DetermineFileType.Start
+
+
+' determine file extension
+Function.Intrinsic.String.IsInString(V.local.sFileType,".xls",True,V.Global.bExcel)
+'Function.Intrinsic.String.IsInString(V.local.sFileType,".sxc",True,V.Global.bOOCalc)
+'Function.Intrinsic.String.IsInString(V.local.sFileType,".txt",True,V.Global.bText)
+'Function.Intrinsic.String.IsInString(V.local.sFileType,".csv",True,V.Global.bComma)
+'Function.Intrinsic.String.IsInString(V.local.sFileType,".xml",True,V.Global.bXML)
+
+Program.Sub.DetermineFileType.End
+
+Program.Sub.CSVFileArray.Start
+'
+'
+'V.Local.iDQuoteFound.Declare(Long)
+'V.local.iDQuoteMin.Declare(Long)
+'V.Local.sElements.Declare(String)
+'
+'V.Global.bCommaSep.Set(True)
+'F.Intrinsic.File.File2String(V.Global.sUserInputFile,V.Global.sInputDataArray)
+'F.Intrinsic.String.Split(V.Global.sInputDataArray,V.Ambient.Newline,V.Global.sInputDataArray)
+'F.Intrinsic.String.Occurs(V.Global.sInputDataArray(0),V.ASCII.34,0,V.Local.iDQuoteFound)
+'F.Intrinsic.String.Split(V.Global.sInputDataArray(0),",",V.Local.sElements)
+'F.Intrinsic.Math.Mult(V.Local.sElements.uBound,2,V.local.iDQuoteMin)
+'
+'F.Intrinsic.Control.If(V.Local.iDQuoteFound,>=,V.local.iDQuoteMin)
+'	V.Global.bTrueCSV.Set(True)
+'F.Intrinsic.Control.EndIf
+'
+
+Program.Sub.CSVFileArray.End
+
+Program.Sub.ExcelFileArray.Start
+
+V.Local.s.Declare(String)
+
+' read work book information; The sheet delimiter is &^&, the row delimiter is $!$, and the column delimiter is *!*
+F.Automation.MSExcel.ReadSpreadsheet(V.Global.sUserInputFile,V.Global.sInputDataArray)
+
+' split out possible multi sheets
+F.Intrinsic.String.Split(V.Global.sInputDataArray,"&^&",V.Global.sInputDataArray)
+
+' put values into udt
+f.Intrinsic.Variable.LoadUDTFromString(v.uGlobal.uFileData,v.Global.sFileElements,v.Global.sInputDataArray(v.Global.iSheetID),"$!$","*!*",false)
+
+Program.Sub.ExcelFileArray.End
+
+Program.Sub.TextFileArray.Start
+
+
+V.Local.iCount.Declare(Long)
+V.Local.sTemp.Declare(String)
+V.Local.iCharCount.Declare(Long)
+V.Local.sSep.Declare(String)
+
+F.Intrinsic.File.File2String(V.Global.sUserInputFile,V.Global.sInputDataArray)
+f.Intrinsic.String.Split(v.Global.sInputDataArray,v.Ambient.NewLine,v.Local.sTemp)
+
+F.Intrinsic.String.Occurs(v.Local.sTemp(0),V.ASCII.44,V.Local.iCharCount)
+F.Intrinsic.Control.If(V.Local.iCharCount,>=,2)
+V.Local.sSep.Set(",")
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Occurs(v.Local.sTemp(0),V.ASCII.9,V.Local.iCharCount)
+F.Intrinsic.Control.If(V.Local.iCharCount,>=,2)
+V.Local.sSep.Set(V.Ambient.Tab)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Occurs(v.Local.sTemp(0),V.ASCII.126,V.Local.iCharCount)
+F.Intrinsic.Control.If(V.Local.iCharCount,>=,2)
+V.Local.sSep.Set("~")
+F.Intrinsic.Control.EndIf
+
+
+'f.Intrinsic.String.Replace(v.Global.sInputDataArray,v.Local.sSep,"*!*",v.Global.sInputDataArray)
+' put values into udt
+f.Intrinsic.Variable.LoadUDTFromString(v.uGlobal.uFileData,V.Global.sFileElements,V.Global.sInputDataArray,v.Ambient.NewLine,v.Local.sSep,false,1000)
+
+
+Program.Sub.TextFileArray.End
+
+Program.Sub.XMLFileArray.Start
+'
+'V.Local.bEOF.Declare(Boolean)
+'V.Local.sRet.Declare(String)
+'V.Local.iCount.Declare(Long,0)
+'V.Local.sDoc.Declare(String)
+'
+'F.Global.XML.LoadDocument("XMLFile",V.Global.sUserInputFile,False,True,False,False)
+'F.Global.XML.Query("XMLFile","ReadSet","//*/TestData")
+'
+'F.Intrinsic.Control.DoUntil(V.Local.bEOF,=,True)
+'	Function.Global.XML.ReadNodeSetValue("XMLFile","ReadSet","text",V.Local.sRet)
+'	F.Intrinsic.Control.IF(V.Local.iCount,=,0)
+'		V.Global.sInputDataArray.Set(V.Local.sRet)
+'	F.Intrinsic.Control.Else
+'		F.Intrinsic.String.Concat(V.Global.sInputDataArray,"*!*",V.Local.sRet,V.Global.sInputDataArray)
+'	F.Intrinsic.Control.EndIf
+'	F.Intrinsic.Math.Add(V.Local.iCount,1,V.Local.iCount)
+'	F.Global.XML.Next("XMLFile","ReadSet",V.Local.bEOF)
+'F.Intrinsic.Control.Loop
+'F.Intrinsic.String.Split(V.Global.sInputDataArray,"*!*",V.Global.sInputDataArray)
+'
+Program.Sub.XMLFileArray.End
+
+Program.Sub.LoadCharLengths.Start
+
+V.Local.sHeaderElements.Declare(String)
+V.Local.sLineElements.Declare(String)
+V.Local.sMQDElements.Declare(String)
+V.Local.sHeaderElementLengths.Declare(String)
+V.Local.sLineElementLengths.Declare(String)
+V.Local.sMQDElementLengths.Declare(String)
+V.Local.iFor.Declare(Long)
+
+' ============== Header====================
+F.Intrinsic.String.Concat(V.Local.sHeaderElements,"Buyer_ID|*|PO_NUMBER|*|Line_Number|*|Change_Order|*|PO_Date|*|Ship_Date|*|Ship_To_Code|*|Terms_Discnt|*|",V.Local.sHeaderElements)
+F.Intrinsic.String.Concat(V.Local.sHeaderElements,"Change_By_Date|*|Release_Num|*|Release_Start_Date|*|Release_End_Date|*|Hold_Type|*|Change_Type|*|Transaction|*|",V.Local.sHeaderElements)
+F.Intrinsic.String.Concat(V.Local.sHeaderElements,"Trading_Partner|*|Price_From_Quote|*|Accum_Rcpt|*|Last_Recd_Qty|*|Last_Recd_Date|*|Filler|*|Record_Type|*|Conversion_Flag",V.Local.sHeaderElements)
+
+' get element names into an array
+F.Intrinsic.String.Split(V.Local.sHeaderElements,"|*|",V.Local.sHeaderElements)
+
+' get header element lengths into an array
+F.Intrinsic.String.Split("35|*|15|*| 3|*|1|*|8|*|8|*|17|*|8|*|1|*|25|*|8|*|8|*|1|*|1|*|3|*|3|*|1|*|10|*|10|*|8|*|336|*|1|*|1","|*|",V.Local.sHeaderElementLengths)
+
+' name and length arrays should be the same, redim the udt to match, to prep it to acceptthe vales
+V.uGlobal.uHeaderCharLengths.Redim(V.Local.sHeaderElements.LBound,V.Local.sHeaderElements.UBound)
+
+' set the element name and length to to udt
+F.Intrinsic.Control.For(V.Local.iFor,V.Local.sHeaderElements.LBound,V.Local.sHeaderElements.UBound,1)
+	V.uGlobal.uHeaderCharLengths(v.Local.iFor)!ElementName.Set(V.Local.sHeaderElements(v.Local.iFor))
+	V.uGlobal.uHeaderCharLengths(v.Local.iFor)!CharLength.Set(V.Local.sHeaderElementLengths(v.Local.iFor))
+F.Intrinsic.Control.Next(V.Local.iFor)
+
+'==================MQD==================
+F.Intrinsic.String.Concat(V.Local.sMQDElements,"Buyer_ID|*|PO_Number|*|Line_Number|*|Change_Order|*|OrdQtyPrev|*|Order_Qty|*|DueDatePrev|*|DueDate|*|",V.Local.sMQDElements)
+F.Intrinsic.String.Concat(V.Local.sMQDElements,"Order_Type|*|Change_Type|*|Info|*|Filler|*|Record_Type|*|Conversion_Flag",V.Local.sMQDElements)
+
+' get MQD element names into an array
+F.Intrinsic.String.Split(V.Local.sMQDElements,"|*|",V.Local.sMQDElements)
+
+' get mqd element lengths into an array
+F.Intrinsic.String.Split("35|*|15|*|3|*|1|*|12|*|12|*|8|*|8|*|1|*|1|*|30|*|384|*|1|*|1","|*|",V.Local.sMQDElementLengths)
+
+' name and length arrays should be the same, redim the udt to match, to prep it to acceptthe vales
+V.uGlobal.uMQDCharLengths.Redim(V.Local.sMQDElements.LBound,V.Local.sMQDElements.UBound)
+
+' set the element name and length to to udt
+F.Intrinsic.Control.For(V.Local.iFor,V.Local.sMQDElements.LBound,V.Local.sMQDElements.UBound,1)
+	V.uGlobal.uMQDCharLengths(v.Local.iFor)!ElementName.Set(V.Local.sMQDElements(v.Local.iFor))
+	V.uGlobal.uMQDCharLengths(v.Local.iFor)!CharLength.Set(V.Local.sMQDElementLengths(v.Local.iFor))
+F.Intrinsic.Control.Next(V.Local.iFor)
+
+' ================= Line ==================
+F.Intrinsic.String.Concat(V.Local.sLineElements,"Buyer_ID|*|PO_Number|*|Line_Number|*|Change_Order|*|Buyer_Part|*|Buyer_Part_Loc|*|Order_Qty|*|UM|*|",V.Local.sLineElements)
+F.Intrinsic.String.Concat(V.Local.sLineElements,"Price|*|Description|*|Bulk_Num|*|Bin_Num|*|Accum_Rcpt|*|In_Transit|*|Last_Recpt_Qty|*|Last_Recpt_Date|*|PO_Line|*|",V.Local.sLineElements)
+F.Intrinsic.String.Concat(V.Local.sLineElements,"Write_Inventory|*|Price_Check|*|Long_Part_Num|*|Mult_Qty|*|MQD_Due_Date|*|Order_Type|*|Ship_To|*|Old_Ship_To|*|",V.Local.sLineElements)
+F.Intrinsic.String.Concat(V.Local.sLineElements,"Hold_Type|*|INFO1|*|INFO2|*|Change_Type|*|Transaction|*|USER1|*|USER2|*|USER3|*|USER4|*|Item_Promise_Date|*|",V.Local.sLineElements)
+F.Intrinsic.String.Concat(V.Local.sLineElements,"Line_Type|*|Negative_Qty_Flag|*|Trigger_Part_Flag|*|Last_Shipment_Id|*|Record_Type|*|Conversion_Flag",V.Local.sLineElements)
+
+' get line element names into an array
+F.Intrinsic.String.Split(V.Local.sLineElements,"|*|",V.Local.sLineElements)
+
+' get line element lengths into an array
+F.Intrinsic.String.Split("35|*|15|*|3|*|1|*|20|*|2|*|12|*|2|*|13|*|30|*|30|*|30|*|8|*|8|*|8|*|8|*|3|*|1|*|1|*|35|*|1|*|8|*|1|*|17|*|17|*|1|*|20|*|20|*|1|*|3|*|30|*|30|*|30|*|30|*|8|*|1|*|1|*|1|*|25|*|1|*|1","|*|",V.Local.sLineElementLengths)
+
+' name and length arrays should be the same, redim the udt to match, to prep it to acceptthe vales
+V.uGlobal.uLineCharLengths.Redim(V.Local.sLineElements.LBound,V.Local.sLineElements.UBound)
+
+' set the element name and length to to udt
+F.Intrinsic.Control.For(V.Local.iFor,V.Local.sLineElements.LBound,V.Local.sLineElements.UBound,1)
+	V.uGlobal.uLineCharLengths(v.Local.iFor)!ElementName.Set(V.Local.sLineElements(v.Local.iFor))
+	V.uGlobal.uLineCharLengths(v.Local.iFor)!CharLength.Set(V.Local.sLineElementLengths(v.Local.iFor))
+F.Intrinsic.Control.Next(V.Local.iFor)
+
+Program.Sub.LoadCharLengths.End
+
+Program.Sub.OOCalcArray.Start
+
+Program.Sub.OOCalcArray.End
+
+Program.Sub.EAFile.Start
+
+V.Local.sUploadFile.Declare(String)
+V.Local.iFor.Declare(Long)
+V.Local.iForLine.Declare(Long)
+V.Local.iForMqd.Declare(Long)
+V.Local.sRet.Declare(String)
+V.Local.sMqdRet.Declare(String)
+V.Local.sLine.Declare(String)
+V.Local.sHeader.Declare(String)
+V.Local.sMqd.Declare(String)
+V.Local.iHndl.Declare(Long)
+V.Local.iLine.Declare(Long)
+V.Local.iMqd.Declare(Long)
+
+' define upload file path
+F.Intrinsic.String.Concat(V.Caller.FilesDir,"\EA850",V.Caller.CompanyCode,V.Local.sUploadFile)
+F.Intrinsic.File.GetHandle(V.Local.iHndl)
+F.Intrinsic.File.OpenForWrite(V.Local.sUploadFile,V.Local.iHndl)
+
+
+' for each header record
+F.Intrinsic.Control.For(V.Local.iFor,V.uGlobal.uEAHeader!PO_Number.LBound,V.uGlobal.uEAHeader!PO_Number.UBound,1)
+
+	' format the header values
+	F.Intrinsic.Control.CallSub(Formatheaderfields,"iFor",V.Local.iFor)
+	V.Local.sHeader.Set(V.Args.REC)
+
+	' write the line
+	F.Intrinsic.File.WriteLine(V.Local.iHndl,V.Local.sHeader)
+	
+'===look for corresponding lines; need to look before the fields are ppadded, because it somehow doesn't work after they are :|
+	F.Intrinsic.Variable.UDTMultiSeek(V.uGlobal.uEALine!PO_Number,V.uGlobal.uEAHeader(v.Local.iFor)!PO_Number,V.Local.sRet)
+
+	' should get a return,but check, just in case
+	F.Intrinsic.Control.If(V.Local.sRet.Trim,<>,"")
+
+		' reset line number to start at 1
+		V.Local.iLine.Set(0)
+
+		' split the rest and add a new line for each detail record
+		F.Intrinsic.String.Split(V.Local.sRet,"*!*",V.Local.sRet)
+		F.Intrinsic.Control.For(V.Local.iForLine,V.Local.sRet.LBound,V.Local.sRet.UBound,1)
+
+			' increment ilne
+			F.Intrinsic.Math.Add(V.Local.iLine,1,V.Local.iLine)
+
+			' if the line number is graeter than 999, add new header and reset line to 1
+			F.Intrinsic.Control.If(V.Local.iLine,>,999)
+
+				' write new header
+				F.Intrinsic.File.WriteLine(V.Local.iHndl,V.Local.sHeader)
+
+				' reset line to 1
+				V.Local.iLine.Set(1)
+
+			F.Intrinsic.Control.EndIf
+
+			' format the line fields
+			F.Intrinsic.Control.CallSub(Formatlinefields,"iFor",V.Local.sRet(v.Local.iForLine),"iLine",V.Local.iLine)
+
+			' create line record
+			V.Local.sLine.Set(V.Args.REC)
+			' write line
+			F.Intrinsic.File.WriteLine(V.Local.iHndl,V.Local.sLine)
+
+
+'========== look for MQD (Ship Schedule) lines
+			F.Intrinsic.Variable.UDTMultiSeek(V.uGlobal.uEAMqd!Item,V.uGlobal.uEALine(v.Local.iForLine)!Buyer_Part,V.Local.sMqdRet)
+			F.Intrinsic.Control.If(V.Local.sMqdRet.Trim,<>,"")
+				V.Local.iMqd.Set(0)
+				F.Intrinsic.String.Split(V.Local.sMqdRet,"*!*",V.Local.sMqdRet)
+				F.Intrinsic.Control.For(V.Local.iForMqd,V.Local.sMqdRet.LBound,V.Local.sMqdRet.UBound,1)
+					F.Intrinsic.Math.Add(V.Local.iMqd,1,V.Local.iMqd)
+'					V.Local.iMqd.Set(1)
+					F.Intrinsic.Control.CallSub(Formatmqdfields,"iFor",V.Local.sMqdRet(v.Local.iForMqd),"iLine",V.Local.iLine)
+
+					' create the record
+					V.Local.sMqd.Set(V.Args.REC)
+					' write the line
+					F.Intrinsic.File.WriteLine(V.Local.iHndl,V.Local.sMqd)
+
+				F.Intrinsic.Control.Next(V.Local.iForMqd)
+'				V.Local.iLine.Set(0)
+			F.Intrinsic.Control.EndIf
+			
+
+		F.Intrinsic.Control.Next(V.Local.iForLine)
+	F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.Next(V.Local.iFor)
+
+F.Intrinsic.File.CloseFile(V.Local.iHndl)
+
+Program.Sub.EAFile.End
+
+Program.Sub.FormatHeaderFields.Start
+
+
+
+V.Local.sRec.Declare(String)
+V.Local.sRet.Declare(String)
+V.Local.iFor.Declare(Long)
+V.Local.iForLen.Declare(Long)
+V.Local.sVal.Declare(String)
+
+' pad all header records to correct field size; format dates and numeric values, in the process
+
+' Accum Rcpt
+V.uGlobal.uEAHeader(v.Args.iFor)!Accum_Rcpt.Set("0000000000")
+
+V.Local.iFor.Set(V.Args.iFor)
+F.Intrinsic.Control.For(V.Local.iForLen,V.uGlobal.uHeaderCharLengths!ElementName.LBound,V.uGlobal.uHeaderCharLengths!ElementName.UBound,1)
+
+	F.Intrinsic.String.RPad(V.uGlobal.uEAHeader(V.Local.iFor)![V.uGlobal.uHeaderCharLengths(V.Local.iForLen)!ElementName]," ",V.uGlobal.uHeaderCharLengths(V.Local.iForLen)!CharLength,V.Local.sVal)
+	F.Intrinsic.Variable.UDTMultiSeekSet(V.uGlobal.uEAHeader![V.uGlobal.uHeaderCharLengths(V.Local.iForLen)!ElementName],V.uGlobal.uEAHeader(V.Local.iFor)![V.uGlobal.uHeaderCharLengths(V.Local.iForLen)!ElementName],V.uGlobal.uEAHeader![V.uGlobal.uHeaderCharLengths(V.Local.iForLen)!ElementName],v.Local.sVal)
+
+	F.Intrinsic.String.Concat(V.Local.sRec,V.Local.sVal,V.Local.sRec)
+F.Intrinsic.Control.Next(V.Local.iForLen)
+
+F.Intrinsic.Variable.AddRV("REC",V.Local.sRec)
+
+
+Program.Sub.FormatHeaderFields.End
+
+Program.Sub.FormatLineFields.Start
+
+
+V.Local.iForLen.Declare(Long)
+V.Local.sVal.Declare(String)
+V.Local.sRec.Declare(String)
+' pad all line records to correct field size; format dates and numeric values, in the process
+
+' line number
+F.Intrinsic.String.LPad(V.Args.iLine,"0",3,V.uGlobal.uEALine(V.Args.iFor)!Line_Number)
+
+' qty
+F.Intrinsic.String.Split(V.uGlobal.uEALine(v.Args.iFor)!Order_Qty,".",V.Local.sVal)
+V.Local.sVal.RedimPreserve(0,1)
+F.Intrinsic.String.RPad(V.Local.sVal(1),"0",4,V.Local.sVal(1))
+F.Intrinsic.String.LPad(V.Local.sVal(0),"0",8,V.Local.sVal(0))
+F.Intrinsic.String.Concat(V.Local.sVal(0),V.Local.sVal(1),V.uGlobal.uEALine(v.Args.iFor)!Order_Qty)
+
+' po line -  some might use lines, others won't
+F.Intrinsic.Control.If(V.uGlobal.uEALine(v.Args.iFor)!PO_Line,<>,"")
+	F.Intrinsic.String.LPad(V.uGlobal.uEALine(v.Args.iFor)!PO_Line,"0",3,V.uGlobal.uEALine(v.Args.iFor)!PO_Line)
+F.Intrinsic.Control.Else
+	F.Intrinsic.String.LPad(V.uGlobal.uEALine(v.Args.iFor)!PO_Line," ",3,V.uGlobal.uEALine(v.Args.iFor)!PO_Line)
+F.Intrinsic.Control.EndIf
+
+' due date
+F.Intrinsic.String.Format(V.uGlobal.uEALine(v.Args.iFor)!Item_Promise_Date,"YYYYMMDD",V.uGlobal.uEALine(v.Args.iFor)!Item_Promise_Date)
+F.Intrinsic.String.Format(V.uGlobal.uEALine(v.Args.iFor)!MQD_Due_Date,"YYYYMMDD",V.uGlobal.uEALine(v.Args.iFor)!MQD_Due_Date)
+
+F.Intrinsic.Control.For(V.Local.iForLen,V.uGlobal.uLineCharLengths!ElementName.LBound,V.uGlobal.uLineCharLengths!ElementName.UBound,1)
+	F.Intrinsic.String.RPad(V.uGlobal.uEALine(V.Args.iFor)![V.uGlobal.uLineCharLengths(v.Local.iForLen)!ElementName]," ",V.uGlobal.uLineCharLengths(v.Local.iForLen)!CharLength,V.Local.sVal)
+	F.Intrinsic.Variable.UDTMultiSeekSet(V.uGlobal.uEALine![V.uGlobal.uLineCharLengths(v.Local.iForLen)!ElementName],V.uGlobal.uEALine(V.Args.iFor)![V.uGlobal.uLineCharLengths(v.Local.iForLen)!ElementName],V.uGlobal.uEALine![V.uGlobal.uLineCharLengths(v.Local.iForLen)!ElementName],v.Local.sVal)
+
+	F.Intrinsic.String.Concat(V.Local.sRec,V.Local.sVal,V.Local.sRec)
+F.Intrinsic.Control.Next(V.Local.iForLen)
+
+F.Intrinsic.Variable.AddRV("REC",V.Local.sRec)
+
+Program.Sub.FormatLineFields.End
+
+Program.Sub.FormatMqdFields.Start
+
+V.Local.iForLen.Declare(Long)
+V.Local.sVal.Declare(String)
+V.Local.sRec.Declare(String)
+
+' pad all line records to correct field size; format dates and numeric values, in the process
+
+' line number
+F.Intrinsic.String.LPad(V.Args.iLine,"0",3,V.uGlobal.uEAMqd(V.Args.iFor)!Line_Number)
+
+' qty
+F.Intrinsic.String.Split(V.uGlobal.uEAMqd(v.Args.iFor)!Order_Qty,".",V.Local.sVal)
+V.Local.sVal.RedimPreserve(0,1)
+F.Intrinsic.String.RPad(V.Local.sVal(1),"0",4,V.Local.sVal(1))
+F.Intrinsic.String.LPad(V.Local.sVal(0),"0",8,V.Local.sVal(0))
+F.Intrinsic.String.Concat(V.Local.sVal(0),V.Local.sVal(1),V.uGlobal.uEAMqd(v.Args.iFor)!Order_Qty)
+
+
+' due date
+F.Intrinsic.String.Format(V.uGlobal.uEAMqd(v.Args.iFor)!DueDate,"YYYYMMDD",V.uGlobal.uEAMqd(v.Args.iFor)!DueDate)
+
+F.Intrinsic.Control.For(V.Local.iForLen,V.uGlobal.uMQDCharLengths!ElementName.LBound,V.uGlobal.uMQDCharLengths!ElementName.UBound,1)
+	F.Intrinsic.String.RPad(V.uGlobal.uEAMqd(V.Args.iFor)![V.uGlobal.uMqdCharLengths(v.Local.iForLen)!ElementName]," ",V.uGlobal.uMqdCharLengths(v.Local.iForLen)!CharLength,V.Local.sVal)
+	F.Intrinsic.Variable.UDTMultiSeekSet(V.uGlobal.uEAMqd![V.uGlobal.uMqdCharLengths(v.Local.iForLen)!ElementName],V.uGlobal.uEAMqd(V.Args.iFor)![V.uGlobal.uMqdCharLengths(v.Local.iForLen)!ElementName],V.uGlobal.uEAMqd![V.uGlobal.uMqdCharLengths(v.Local.iForLen)!ElementName],v.Local.sVal)
+
+	F.Intrinsic.String.Concat(V.Local.sRec,V.Local.sVal,V.Local.sRec)
+F.Intrinsic.Control.Next(V.Local.iForLen)
+
+F.Intrinsic.Variable.AddRV("REC",V.Local.sRec)
+
+
+
+Program.Sub.FormatMqdFields.End
+
+Program.Sub.Comments.Start
+${$0$}$EA850ccc$}$JCT$}$5/14/2013
+${$3$}$0$}$$}$-1$}$-1$}$$}$1/1/1900$}$.lib for EDI Imports
+Program.Sub.Comments.End
+
